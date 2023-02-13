@@ -1,17 +1,10 @@
-﻿using ApiDigitalLesson.DL.Model.Interface;
-
-namespace ApiDigitalLesson.DL.Model.Entity
+﻿namespace ApiDigitalLesson.DL.Model.Entity
 {
     /// <summary>
     /// Одиночный урок
     /// </summary>
-    public class SingleLesson : IEntity
+    public class SingleLesson : BaseEntity
     {
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid Id { get; set; }
-
         /// <summary>
         /// Id студента
         /// </summary>

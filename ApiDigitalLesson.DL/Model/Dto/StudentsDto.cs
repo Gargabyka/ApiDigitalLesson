@@ -1,10 +1,17 @@
-﻿namespace ApiDigitalLesson.DL.Model.Entity
+﻿using ApiDigitalLesson.DL.Model.Entity;
+
+namespace ApiDigitalLesson.DL.Model.Dto
 {
     /// <summary>
-    /// Студент
+    /// Dto сущности <see cref="Students"/>
     /// </summary>
-    public class Students: BaseEntity
+    public class StudentsDto
     {
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Имя
         /// </summary>
@@ -38,7 +45,7 @@
         /// <summary>
         /// Описание
         /// </summary>
-        public string? Discription { get; set; }
+        public string Discription { get; set; }
 
         /// <summary>
         /// Id пользователя 

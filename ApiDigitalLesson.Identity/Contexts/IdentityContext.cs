@@ -1,5 +1,4 @@
-﻿using ApiDigitalLesson.Identity.Models;
-using ApiDigitalLesson.Identity.Models.Entity;
+﻿using ApiDigitalLesson.Identity.Models.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
