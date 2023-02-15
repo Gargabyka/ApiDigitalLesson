@@ -1,17 +1,10 @@
-﻿using ApiDigitalLesson.DL.Model.Interface;
-
-namespace ApiDigitalLesson.DL.Model.Entity
+﻿namespace ApiDigitalLesson.DL.Model.Entity
 {
     /// <summary>
     /// Тип занятия
     /// </summary>
-    public class TypeLessons: IEntity
+    public class TypeLessons: BaseEntity
     {
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid Id { get; set; }
-
         /// <summary>
         /// Название занятия
         /// </summary>

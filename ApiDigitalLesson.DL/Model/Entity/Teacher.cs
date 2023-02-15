@@ -1,18 +1,10 @@
-﻿using ApiDigitalLesson.DL.Model.Interface;
-using ApiDigitalLesson.Identity.Models;
-
-namespace ApiDigitalLesson.DL.Model.Entity
+﻿namespace ApiDigitalLesson.DL.Model.Entity
 {
     /// <summary>
     /// Преподаватель
     /// </summary>
-    public class Teacher: IEntity
+    public class Teacher: BaseEntity
     {
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid Id { get; set; }
-
         /// <summary>
         /// Имя
         /// </summary>
@@ -62,10 +54,5 @@ namespace ApiDigitalLesson.DL.Model.Entity
         /// Id пользователя 
         /// </summary>
         public Guid UserId { get; set; }
-
-        /// <summary>
-        /// Пользователь
-        /// </summary>
-        public UserIdentity User { get; set; }
     }
 }

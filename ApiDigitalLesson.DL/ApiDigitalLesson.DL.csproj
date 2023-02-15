@@ -25,9 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Controller\" />
-    <Folder Include="Controllers\Services\Impl\" />
-    <Folder Include="Controllers\Services\Interface\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ApiDigitalLesson.Common.Service
+namespace ApiDigitalLesson.Common.Services.Impl
 {
+    /// <summary>
+    /// Класс для работы с Ip
+    /// </summary>
     public class IpHelper
     {
+        /// <summary>
+        /// Получить Ip адрес 
+        /// </summary>
         public static string GetIpAddress()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());

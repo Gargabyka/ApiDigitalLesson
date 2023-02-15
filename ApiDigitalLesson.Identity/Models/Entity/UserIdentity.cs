@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace ApiDigitalLesson.Identity.Models
+namespace ApiDigitalLesson.Identity.Models.Entity
 {
     /// <summary>
     /// Пользователи

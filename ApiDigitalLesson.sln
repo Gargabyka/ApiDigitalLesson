@@ -9,7 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiDigitalLesson.Common", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiDigitalLesson.DL", "ApiDigitalLesson.DL\ApiDigitalLesson.DL.csproj", "{BCC623C1-12AB-4178-8B14-77C3FA57AF7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiDigitalLesson.Identity", "ApiDigitalLesson.Identity\ApiDigitalLesson.Identity.csproj", "{70C5FD80-26E0-4801-B360-220C494EE8AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiDigitalLesson.Identity", "ApiDigitalLesson.Identity\ApiDigitalLesson.Identity.csproj", "{70C5FD80-26E0-4801-B360-220C494EE8AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scr", "scr", "{DFBAABFD-7ED5-44A4-BA54-8DDB58304A78}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{31A79341-6F70-4E77-A75F-B8245E8A0027}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\загруженное.png = ..\..\..\Desktop\загруженное.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +43,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31A79341-6F70-4E77-A75F-B8245E8A0027} = {DFBAABFD-7ED5-44A4-BA54-8DDB58304A78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {70B13E64-59E0-4199-A8F2-463475478C67}
