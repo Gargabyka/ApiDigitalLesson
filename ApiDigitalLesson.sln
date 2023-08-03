@@ -7,16 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiDigitalLesson", "ApiDigi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiDigitalLesson.Common", "ApiDigitalLesson.Common\ApiDigitalLesson.Common.csproj", "{B587B500-706A-491B-8CE6-A29DBD419156}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiDigitalLesson.DL", "ApiDigitalLesson.DL\ApiDigitalLesson.DL.csproj", "{BCC623C1-12AB-4178-8B14-77C3FA57AF7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiDigitalLesson.Migration", "ApiDigitalLesson.Migration\ApiDigitalLesson.Migration.csproj", "{BCC623C1-12AB-4178-8B14-77C3FA57AF7B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiDigitalLesson.Identity", "ApiDigitalLesson.Identity\ApiDigitalLesson.Identity.csproj", "{70C5FD80-26E0-4801-B360-220C494EE8AD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scr", "scr", "{DFBAABFD-7ED5-44A4-BA54-8DDB58304A78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiDigitalLesson.BL", "ApiDigitalLesson.BL\ApiDigitalLesson.BL.csproj", "{E9191EFF-4309-4B30-A29A-4696BFC27B83}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{31A79341-6F70-4E77-A75F-B8245E8A0027}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\Desktop\загруженное.png = ..\..\..\Desktop\загруженное.png
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspDigitalLesson.Model", "AspDigitalLesson.Model\AspDigitalLesson.Model.csproj", "{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,12 +37,19 @@ Global
 		{70C5FD80-26E0-4801-B360-220C494EE8AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70C5FD80-26E0-4801-B360-220C494EE8AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70C5FD80-26E0-4801-B360-220C494EE8AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9191EFF-4309-4B30-A29A-4696BFC27B83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9191EFF-4309-4B30-A29A-4696BFC27B83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9191EFF-4309-4B30-A29A-4696BFC27B83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9191EFF-4309-4B30-A29A-4696BFC27B83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{31A79341-6F70-4E77-A75F-B8245E8A0027} = {DFBAABFD-7ED5-44A4-BA54-8DDB58304A78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {70B13E64-59E0-4199-A8F2-463475478C67}

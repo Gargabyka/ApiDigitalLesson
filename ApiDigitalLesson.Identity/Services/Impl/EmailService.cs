@@ -32,19 +32,17 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 builder.HtmlBody = request.Body;
                 email.Body = builder.ToMessageBody();
 
-                using (var client = new MailKit.Net.Smtp.SmtpClient())
-                {
-                    await client.ConnectAsync(_mailSettings.SmtpHost, _mailSettings.SmtpPort, true);
-                    await client.AuthenticateAsync(_mailSettings.SmtpUser, _mailSettings.SmtpPass);
+                using var client = new MailKit.Net.Smtp.SmtpClient();
+                await client.ConnectAsync(_mailSettings.SmtpHost, _mailSettings.SmtpPort, true);
+                await client.AuthenticateAsync(_mailSettings.SmtpUser, _mailSettings.SmtpPass);
 
-                    await client.SendAsync(email);
+                await client.SendAsync(email);
 
-                    await client.DisconnectAsync(true);
-                }
+                await client.DisconnectAsync(true);
             }
             catch (System.Exception e)
             {
-                throw new ApiException(e.InnerException.ToString());
+                throw new ApiException($"{e.InnerException}");
             }
         }
     }
