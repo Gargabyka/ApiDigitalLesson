@@ -27,11 +27,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
         private readonly UserManager<UserIdentity> _userManager;
         private readonly RoleManager<RoleIdentity> _roleManager;
         private readonly SignInManager<UserIdentity> _signInManager;
-        private readonly JWTSettings _jwtSettings;
+        private readonly JwtSettings _jwtSettings;
         private readonly IEmailService _emailService;
         public AccountService(UserManager<UserIdentity> userManager,
             RoleManager<RoleIdentity> roleManager,
-            IOptions<JWTSettings> jwtSettings,
+            IOptions<JwtSettings> jwtSettings,
             SignInManager<UserIdentity> signInManager,
             IEmailService emailService)
         {
@@ -85,7 +85,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                     { StatusCode = (int)HttpStatusCode.BadRequest };
             }
 
-            var jwToken = await GenerateJWToken(user, ip);
+            var jwToken = await GenerateJwToken(user, ip);
             var response = new AuthenticationResponse()
             {
                 Id = user.Id,
@@ -124,7 +124,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
 
                 var verificationUri = await SendVerificationEmail(user, uri);
 
-                return new BaseResponse<string>(user.Id.ToString(), message: $"Пользователь зарегистрирован. Пожалуйста, подтвердите свой аккаунт перейдя по данной ссылке: {verificationUri}");
+                return new BaseResponse<string>(user.Id, message: $"Пользователь зарегистрирован. Пожалуйста, подтвердите свой аккаунт перейдя по данной ссылке: {verificationUri}");
             }
 
             return new BaseResponse<string>("Произошла ошибка при регистрации пользователя") {Succeeded = false};
@@ -140,7 +140,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             var result = await _userManager.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
             {
-                return new BaseResponse<string>(user.Id.ToString(), message: $"Данный пользователь успешно подтвержден {user.Email}.");
+                return new BaseResponse<string>(user.Id, message: $"Данный пользователь успешно подтвержден {user.Email}.");
             }
 
             throw new ApiException($"Произошла ошибка при подтверждении аккаунта {user.Email}.") { StatusCode = (int)HttpStatusCode.InternalServerError };
@@ -152,13 +152,13 @@ namespace ApiDigitalLesson.Identity.Services.Impl
         /// </summary>
         public async Task ForgotPasswordAsync(ForgotPasswordRequest request, string uri)
         {
+            const string route = "api/Identity/reset-password/";
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null) return;
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var route = "api/Identity/reset-password/";
             var enpointUri = new Uri(string.Concat($"{uri}/", route));
-            var resetPasswordUri = QueryHelpers.AddQueryString(enpointUri.ToString(), "userId", user.Id.ToString());
+            var resetPasswordUri = QueryHelpers.AddQueryString(enpointUri.ToString(), "userId", user.Id);
             var emailRequest = new EmailRequest()
             {
                 Body = $"Для сброса пароля перейдите по ссылке: {resetPasswordUri}",
@@ -174,7 +174,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
         public async Task<BaseResponse<string>> ResetPasswordAsync(string userId, ResetPasswordRequest request)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) throw new ApiException($"Пользователь под данным email:'{user.Email}' не зарегистрирован.");
+            if (user == null) throw new ApiException($"Пользователь под данным не зарегистрирован.");
 
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, resetToken, request.Password);
@@ -202,24 +202,28 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 throw new ApiException($"Аккаунт под данным email:'{request.Email}' не подтвержден.") { StatusCode = (int)HttpStatusCode.BadRequest };
             }
 
-            string refreshToken = await _userManager.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
-            bool isValid = await _userManager.VerifyUserTokenAsync(user, "MyApp", "RefreshToken", request.Token);
+            var refreshToken = await _userManager.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
+            var isValid = await _userManager.VerifyUserTokenAsync(user, "MyApp", "RefreshToken", request.Token);
             if (!refreshToken.Equals(request.Token) || !isValid)
             {
                 throw new ApiException($"Ошибка при получении токена.") { StatusCode = (int)HttpStatusCode.BadRequest };
             }
 
-            string ipAddress = IpHelper.GetIpAddress();
-            JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user, ipAddress);
-            AuthenticationResponse response = new AuthenticationResponse();
-            response.Id = user.Id.ToString();
-            response.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-            response.Email = user.Email;
-            response.UserName = user.UserName;
+            var ipAddress = IpHelper.GetIpAddress();
+            var jwtSecurityToken = await GenerateJwToken(user, ipAddress);
+            var response = new AuthenticationResponse()
+            {
+                Id = user.Id,
+                JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                Email = user.Email,
+                UserName = user.UserName,
+                IsVerified = user.EmailConfirmed,
+                RefreshToken = await GenerateRefreshToken(user)
+            };
+
             var role = await _userManager.GetRolesAsync(user);
+            
             response.Roles = role.First();
-            response.IsVerified = user.EmailConfirmed;
-            response.RefreshToken = await GenerateRefreshToken(user);
 
             await _signInManager.SignInAsync(user, false);
             return new BaseResponse<AuthenticationResponse>(response, $"Аутентификация {user.UserName}");
@@ -260,7 +264,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                     UserName = users.UserName,
                     Email = users.Email,
                     Phone = users.PhoneNumber,
-                    Role = roles.First() ?? String.Empty,
+                    Role = roles.First() ?? string.Empty,
                     EmailConfirmed = users.EmailConfirmed,
                     PhoneConfirmed = users.PhoneNumberConfirmed
                 };
@@ -274,7 +278,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
         /// <summary>
         /// Сгенерировать токен
         /// </summary>
-        private async Task<JwtSecurityToken> GenerateJWToken(UserIdentity user, string ip)
+        private async Task<JwtSecurityToken> GenerateJwToken(UserIdentity user, string ip)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
@@ -289,7 +293,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                     new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim("uid", user.Id.ToString()),
+                    new Claim("uid", user.Id),
                     new Claim("ip", ip)
                 }
                 .Union(userClaims)
@@ -327,11 +331,12 @@ namespace ApiDigitalLesson.Identity.Services.Impl
         /// </summary>
         private async Task<string> SendVerificationEmail(UserIdentity user, string uri)
         {
+            const string route = "api/Identity/confirm-email/";
+            
             var verificationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             verificationCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(verificationCode));
-            var route = "api/Identity/confirm-email/";
-            var _enpointUri = new Uri(string.Concat($"{uri}/", route));
-            var verificationUri = QueryHelpers.AddQueryString(_enpointUri.ToString(), "userId", user.Id.ToString());
+            var enpointUri = new Uri(string.Concat($"{uri}/", route));
+            var verificationUri = QueryHelpers.AddQueryString(enpointUri.ToString(), "userId", user.Id.ToString());
             verificationUri = QueryHelpers.AddQueryString(verificationUri, "code", verificationCode);
 
             await _emailService.SendAsync(new EmailRequest()

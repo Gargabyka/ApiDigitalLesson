@@ -7,7 +7,8 @@
         /// </summary>
         public static bool IsNull(this string str)
         {
-            return string.IsNullOrEmpty(str);
+            var result = string.IsNullOrEmpty(str) && string.IsNullOrWhiteSpace(str);
+            return result;
         }
     }
 }

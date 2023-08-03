@@ -27,7 +27,7 @@ namespace ApiDigitalLesson.Identity
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IAccountService, AccountService>();
 
-            services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
+            services.Configure<JwtSettings>(configuration.GetSection("JWTSettings"));
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
 
             services.AddDbContext<IdentityContext>();
