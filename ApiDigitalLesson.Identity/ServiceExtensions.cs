@@ -1,10 +1,8 @@
 ﻿using System.Text;
 using ApiDigitalLesson.Common.Model;
 using ApiDigitalLesson.Identity.Contexts;
-using ApiDigitalLesson.Identity.Models;
 using ApiDigitalLesson.Identity.Models.Dto;
 using ApiDigitalLesson.Identity.Models.Entity;
-using ApiDigitalLesson.Identity.Models.Request;
 using ApiDigitalLesson.Identity.Services.Impl;
 using ApiDigitalLesson.Identity.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,11 +22,9 @@ namespace ApiDigitalLesson.Identity
     {
         public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IAccountService, AccountService>();
 
-            services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
-            services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+            services.Configure<JwtSettings>(configuration.GetSection("JWTSettings"));
 
             services.AddDbContext<IdentityContext>();
 

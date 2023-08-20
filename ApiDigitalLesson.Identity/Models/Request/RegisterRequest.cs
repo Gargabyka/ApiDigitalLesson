@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ApiDigitalLesson.Identity.Models.Attribute;
 
 namespace ApiDigitalLesson.Identity.Models.Request
 {
@@ -27,5 +28,9 @@ namespace ApiDigitalLesson.Identity.Models.Request
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердить пароль")]
         public string PasswordConfirm { get; set; }
+        
+        [Required]
+        [StringRange]
+        public string Role { get; set; }
     }
 }

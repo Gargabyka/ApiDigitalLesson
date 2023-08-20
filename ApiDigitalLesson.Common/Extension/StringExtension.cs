@@ -2,9 +2,13 @@
 {
     public static class StringExtension
     {
-        public static bool IsNull(this string str)
+        /// <summary>
+        /// Выполнить проверку на null или empty
+        /// </summary>
+        public static bool IsNull(this string? str)
         {
-            return string.IsNullOrEmpty(str);
+            var result = str == null && string.IsNullOrEmpty(str) && string.IsNullOrWhiteSpace(str);
+            return result;
         }
     }
 }

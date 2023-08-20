@@ -3,7 +3,7 @@
     /// <summary>
     /// Настройки JWT токена
     /// </summary>
-    public class JWTSettings
+    public class JwtSettings
     {
         /// <summary>
         /// Ключ

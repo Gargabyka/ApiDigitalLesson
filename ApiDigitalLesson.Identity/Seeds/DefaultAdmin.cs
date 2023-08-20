@@ -1,4 +1,4 @@
-﻿using ApiDigitalLesson.Identity.Models;
+﻿using ApiDigitalLesson.Identity.Models.Entity;
 using ApiDigitalLesson.Identity.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 
