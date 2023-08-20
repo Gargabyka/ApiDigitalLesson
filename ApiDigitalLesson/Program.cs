@@ -1,4 +1,5 @@
 using ApiDigitalLesson.BL;
+using ApiDigitalLesson.Common;
 using ApiDigitalLesson.Extensions;
 using ApiDigitalLesson.Identity;
 using AspDigitalLesson.Model.Mapping;
@@ -18,12 +19,18 @@ builder.Services.AddCustomSwagger();
 builder.Services.AddSingleton(config);
 builder.Services.AddIdentity(config);
 builder.Services.AddModules(config);
+builder.Services.AddCommonModules(config);
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
 
 //if (builder != null)
 //{

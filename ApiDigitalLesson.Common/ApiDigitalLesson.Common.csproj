@@ -14,11 +14,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Interface\" />
+    <ProjectReference Include="..\AspDigitalLesson.Model\AspDigitalLesson.Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AspDigitalLesson.Model\AspDigitalLesson.Model.csproj" />
+    <PackageReference Include="MailKit" Version="3.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+    <PackageReference Include="Telegram.Bots" Version="5.9.0" />
   </ItemGroup>
 
 </Project>

@@ -30,8 +30,8 @@
             Data = data;
             Succeeded = succeeded;
         }
-        
-        public bool Succeeded;
+
+        public bool Succeeded { get; set; } = true;
         public string? Message { get; set; }
         public List<string> Errors = null!;
         public T Data { get; set; } = default!;

@@ -1,7 +1,9 @@
-﻿namespace ApiDigitalLesson.BL.Services.Interface
+﻿using ApiDigitalLesson.BL.Services.Impl;
+
+namespace ApiDigitalLesson.BL.Services.Interface
 {
     /// <summary>
-    /// Интерфейс для работы с сущностью
+    /// Интерфейс для с сервисом <see cref="GenericRepository{T}"/>
     /// </summary>
     public interface IGenericRepository<T>
     {
@@ -19,7 +21,7 @@
         /// <summary>
         /// Добавить сущность
         /// </summary>
-        Task AddAsync(T entity);
+        Task<Guid> AddAsync(T entity);
 
         /// <summary>
         /// Обновить сущность

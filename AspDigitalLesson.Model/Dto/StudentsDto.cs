@@ -1,4 +1,6 @@
-﻿using AspDigitalLesson.Model.Entity;
+﻿using System.Text.Json.Serialization;
+using AspDigitalLesson.Model.Converter;
+using AspDigitalLesson.Model.Entity;
 
 namespace AspDigitalLesson.Model.Dto
 {
@@ -40,7 +42,7 @@ namespace AspDigitalLesson.Model.Dto
         /// <summary>
         /// Телеграмм
         /// </summary>
-        public string Telegram { get; set; }
+        public long? TelegramId { get; set; }
 
         /// <summary>
         /// Описание

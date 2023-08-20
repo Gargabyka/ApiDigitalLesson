@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using ApiDigitalLesson.BL.Services.Impl;
 using ApiDigitalLesson.BL.Services.Interface;
-using ApiDigitalLesson.DL.Context;
+using ApiDigitalLesson.Migration.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,8 +37,15 @@ namespace ApiDigitalLesson.BL
 
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             
-            services.AddScoped<IStudentsService, StudentService>();
+            services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IAboutTeacherService, AboutTeacherService>();
+            services.AddScoped<ITypeLessonService, TypeLessonService>();
+            services.AddScoped<ITeacherService, TeacherService>();
+            services.AddScoped<ISchedulerService, SchedulerService>();
+            services.AddScoped<ITeacherTypeLessonService, TeacherTypeLessonService>();
+            services.AddScoped<IUserIdentityService, UserIdentityService>();
+            services.AddScoped<ISingleLessonService, SingleLessonService>();
+            services.AddScoped<INotificationService, NotificationService>();
         }
 
     }

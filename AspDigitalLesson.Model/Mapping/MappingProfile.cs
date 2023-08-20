@@ -11,6 +11,7 @@ namespace AspDigitalLesson.Model.Mapping
             CreateMap<AboutTeacher, AboutTeacherDto>();
             CreateMap<Students, StudentsDto>();
             CreateMap<Teacher, TeacherDto>();
+            CreateMap<TypeLessons, TypeLessonDto>();
         }
     }
 }

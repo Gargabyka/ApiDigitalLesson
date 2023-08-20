@@ -1,4 +1,6 @@
-﻿namespace AspDigitalLesson.Model.Entity
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AspDigitalLesson.Model.Entity
 {
     /// <summary>
     /// Занятие преподавателей
@@ -38,7 +40,7 @@
         /// <summary>
         /// Описание
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Цена
@@ -48,11 +50,13 @@
         /// <summary>
         /// Преподаватель
         /// </summary>
+        [ForeignKey("TeacherId")]
         public Teacher Teacher { get; set; }
 
         /// <summary>
         /// Тип урока
         /// </summary>
+        [ForeignKey("TypeLessonsId")]
         public TypeLessons TypeLessons { get; set; }
     }
 }

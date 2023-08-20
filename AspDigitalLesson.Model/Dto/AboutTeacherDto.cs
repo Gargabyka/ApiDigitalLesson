@@ -21,6 +21,22 @@ namespace AspDigitalLesson.Model.Dto
         /// Комментарий
         /// </summary>
         public string Comment { get; set; }
+        
+        /// <summary>
+        /// Дата создания
+        /// </summary>
+        public DateTime CreateDate { get; set; }
+        
+        /// <summary>
+        /// Имя
+        /// </summary>
+        public string? Name { get; set; }
+        
+        /// <summary>
+        /// Рейтинг
+        /// </summary>
+        public int Rating { get; set; }
+
 
     }
 }

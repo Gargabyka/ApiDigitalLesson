@@ -1,6 +1,6 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using ApiDigitalLesson.DL.Context;
-using ApiDigitalLesson.Identity.Exception;
+using ApiDigitalLesson.Common.CustomException;
+using ApiDigitalLesson.Migration.Context;
 using AspDigitalLesson.Model.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,13 +28,14 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
-                var result = _context.Set<T>().AsQueryable();
+                var result =  _context.Set<T>().AsQueryable();
                 return result;
             }
             catch (Exception e)
             {
-                _logger.LogError($"{typeof(T)}:Не удалось получить данные сущности: {nameof(T)}, {e.InnerException}");
-                throw new ApiException($"{typeof(T)}:Не удалось получить данные сущности: {nameof(T)}, {e.InnerException}");
+                var message = $"{typeof(T)}:Не удалось получить данные сущности: {nameof(T)}, {e.InnerException}";
+                _logger.LogError(message);
+                throw new ApiException(message);
             }
         }
 
@@ -54,25 +55,32 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                _logger.LogError($"Не удалось получить данные сущности: {nameof(T)}, {e.InnerException}");
-                throw new ApiException($"Не удалось получить данные: {nameof(T)}, {e.InnerException}");
+                var message = $"Не удалось получить данные сущности: {nameof(T)}, {e.InnerException}";
+                
+                _logger.LogError(message);
+                throw new ApiException(message);
             }
         }
 
         /// <summary>
         /// Добавить сущность
         /// </summary>
-        public async Task AddAsync(T entity)
+        public async Task<Guid> AddAsync(T entity)
         {
             try
             {
                 _context.Set<T>().Add(entity);
                 await _context.SaveChangesAsync();
+
+                var id = entity.Id;
+                return id;
             }
-            catch (Exception e)
+            catch (AddException e)
             {
-                _logger.LogError($"Не удалось добавить данные сущность: {nameof(T)}, {e.InnerException}");
-                throw new ApiException($"Не удалось добавить данные сущность: {nameof(T)}, {e.InnerException}");
+                var message = $"Не удалось добавить данные сущность: {nameof(T)}, {e.InnerException}";
+                
+                _logger.LogError(message);
+                throw new ApiException(message);
             }
         }
 
@@ -93,8 +101,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                _logger.LogError($"Не удалось обновить сущность: {nameof(T)}, {e.InnerException}");
-                throw new ApiException($"Не удалось обновить сущность: {nameof(T)}, {e.InnerException}");
+                var message = $"Не удалось обновить сущность: {nameof(T)}, {e.InnerException}";
+                
+                _logger.LogError(message);
+                throw new ApiException(message);
             }
         }
 
@@ -117,8 +127,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                _logger.LogError($"Не удалось удалить данные сущности: {nameof(T)}, {e.InnerException}");
-                throw new ApiException($"Не удалось удалить данные сущности: {nameof(T)}, {e.InnerException}");
+                var message = $"Не удалось удалить данные сущности: {nameof(T)}, {e.InnerException}";
+                
+                _logger.LogError(message);
+                throw new ApiException(message);
             }
         }
     }

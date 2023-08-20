@@ -24,5 +24,10 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// Удалить отзыв о преподавателе
         /// </summary>
         Task<IActionResult> DeleteAboutTeacherAsync(string aboutId);
+
+        /// <summary>
+        /// Получить среднюю оценку преподавателя
+        /// </summary>
+        Task<BaseResponse<double>> GetAvengerRatingForTeacherAsync(string teacherId);
     }
 }

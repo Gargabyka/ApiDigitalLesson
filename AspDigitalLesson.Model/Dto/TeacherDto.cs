@@ -25,26 +25,31 @@
         /// <summary>
         /// Телефон
         /// </summary>
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         /// <summary>
         /// Email
         /// </summary>
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// Телеграмм
         /// </summary>
-        public string Telegram { get; set; }
+        public long? TelegramId { get; set; }
 
         /// <summary>
         /// Описание
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Фото
         /// </summary>
-        public byte[] Photo { get; set; }
+        public byte[]? Photo { get; set; }
+        
+        /// <summary>
+        /// Дата рождения
+        /// </summary>
+        public DateTime? DateBirthday { get; set; }
     }
 }

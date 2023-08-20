@@ -5,9 +5,9 @@
         /// <summary>
         /// Выполнить проверку на null или empty
         /// </summary>
-        public static bool IsNull(this string str)
+        public static bool IsNull(this string? str)
         {
-            var result = string.IsNullOrEmpty(str) && string.IsNullOrWhiteSpace(str);
+            var result = str == null && string.IsNullOrEmpty(str) && string.IsNullOrWhiteSpace(str);
             return result;
         }
     }

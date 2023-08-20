@@ -1,4 +1,5 @@
-﻿using AspDigitalLesson.Model.Interface;
+﻿using System.ComponentModel.DataAnnotations;
+using AspDigitalLesson.Model.Interface;
 
 namespace AspDigitalLesson.Model.Entity
 {
@@ -10,6 +11,7 @@ namespace AspDigitalLesson.Model.Entity
         /// <summary>
         /// Id
         /// </summary>
+        [Required]
         public Guid Id { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿
 using ApiDigitalLesson.BL.Services.Interface;
+using ApiDigitalLesson.Common.CustomException;
 using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Model;
-using ApiDigitalLesson.Identity.Exception;
 using AspDigitalLesson.Model.Dto;
 using AspDigitalLesson.Model.Entity;
 using AutoMapper;
@@ -43,7 +43,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             {
                 if (teacherId.IsNull())
                 {
-                    throw new ApiException("Не удалось найти id");
+                    throw new ApiException("Не удалось получить id преподавателя");
                 }
 
                 var teacher = await _teacherRepository.GetAsync(Guid.Parse(teacherId));
@@ -52,7 +52,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     throw new ApiException("Не удалось найти преподавателя");
                 }
 
-                var aboutList = await _aboutTeacherRepository.GetAll()
+                var aboutList = _aboutTeacherRepository.GetAll()
                     .Where(x => x.TeacherId == teacher.Id)
                     .ToListAsync();
                 
@@ -62,11 +62,58 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                _logger.LogError(
-                    $"Не удалось получить отзывы о преподавателе, {e.InnerException}");
+                var message = $"Не удалось получить отзывы о преподавателе, {e.InnerException}";
                 
-                throw new Exception(
-                    $"Не удалось получить отзывы о преподавателе, {e.InnerException}");
+                _logger.LogError(message);
+                throw new Exception(message);
+            }
+        }
+
+        /// <summary>
+        /// Получить среднюю оценку преподавателя
+        /// </summary>
+        public async Task<BaseResponse<double>> GetAvengerRatingForTeacherAsync(string teacherId)
+        {
+            try
+            {
+                if (teacherId.IsNull())
+                {
+                    throw new ApiException("Не удалось получить id преподавателя");
+                }
+                
+                var teacher = await _teacherRepository.GetAsync(Guid.Parse(teacherId));
+                if (teacher == null)
+                {
+                    throw new ApiException("Не удалось найти преподавателя");
+                }
+                
+                var ratingList = await _aboutTeacherRepository.GetAll()
+                    .Where(x => x.TeacherId == teacher.Id)
+                    .Select(x=> x.Rating)
+                    .ToListAsync();
+
+                var rating = 0;
+                double result = 0;
+
+                if (ratingList.Count > 0)
+                {
+                    foreach (var rat in ratingList)
+                    {
+                        rating += rat;
+                    }
+                
+                    result = (double)rating / ratingList.Count;
+                }
+
+                return new BaseResponse<double>(result);
+
+            }
+            catch (Exception e)
+            {
+                var message = $"Не удалось получить среднюю оценку о преподавателе, {e.InnerException}";
+                
+                _logger.LogError(message);
+                throw new Exception(message);
             }
         }
 
@@ -94,7 +141,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     Id = Guid.NewGuid(),
                     TeacherId = teacher.Id,
                     Teacher = teacher,
-                    Comment = aboutTeacherDto.Comment
+                    Comment = aboutTeacherDto.Comment,
+                    Rating = aboutTeacherDto.Rating,
+                    Name = !aboutTeacherDto.Name.IsNull() ? aboutTeacherDto.Name : "Аноним",
+                    CreateDate = aboutTeacherDto.CreateDate
                 };
 
                 await _aboutTeacherRepository.AddAsync(teacherAbout);
@@ -103,11 +153,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                _logger.LogError(
-                    $"Не удалось создать отзыв о преподавателе, {e.InnerException}");
+                var message = $"Не удалось создать отзыв о преподавателе, {e.InnerException}";
                 
-                throw new Exception(
-                    $"Не удалось создать отзыв о преподавателе, {e.InnerException}");
+                _logger.LogError(message);
+                throw new Exception(message);
             }
         }
 
@@ -137,11 +186,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                _logger.LogError(
-                    $"Не удалось удалить отзыв о преподавателе, {e.InnerException}");
+                var message = $"Не удалось удалить отзыв о преподавателе, {e.InnerException}";
                 
-                throw new Exception(
-                    $"Не удалось удалить отзыв о преподавателе, {e.InnerException}");
+                _logger.LogError(message);
+                throw new Exception(message);
             }
         }
     }

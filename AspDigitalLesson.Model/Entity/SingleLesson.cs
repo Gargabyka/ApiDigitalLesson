@@ -3,7 +3,7 @@
     /// <summary>
     /// Одиночный урок
     /// </summary>
-    public class SingleLesson : BaseEntity
+    public class SingleLesson : Lesson
     {
         /// <summary>
         /// Id студента
@@ -11,43 +11,8 @@
         public Guid StudentsId { get; set; }
 
         /// <summary>
-        /// Id типа занятия
-        /// </summary>
-        public Guid TypeLessonId { get; set; }
-
-        /// <summary>
-        /// Дата начала занятия
-        /// </summary>
-        public DateTime DateStart { get; set; }
-
-        /// <summary>
-        /// Дата окончания занятия
-        /// </summary>
-        public DateTime DateEnd { get; set; }
-
-        /// <summary>
-        /// Признак отмененного занятия
-        /// </summary>
-        public bool IsCancel { get; set; }
-
-        /// <summary>
-        /// Признак завершенного занятия
-        /// </summary>
-        public bool IsFinish { get; set; }
-        
-        /// <summary>
-        /// Признак подтвержденного занятия
-        /// </summary>
-        public bool IsConfirmed { get; set; }
-
-        /// <summary>
         /// Студент
         /// </summary>
         public Students Students { get; set; }
-
-        /// <summary>
-        /// Тип занятия
-        /// </summary>
-        public TeacherTypeLesson TeacherTypeLesson { get; set; }
     }
 }

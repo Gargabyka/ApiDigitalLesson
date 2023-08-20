@@ -20,7 +20,7 @@
         /// <summary>
         /// Телефон
         /// </summary>
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         /// <summary>
         /// Email
@@ -30,17 +30,17 @@
         /// <summary>
         /// Телеграмм
         /// </summary>
-        public string Telegram { get; set; }
+        public long? TelegramId { get; set; }
 
         /// <summary>
         /// Описание
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
         
         /// <summary>
         /// Дата рождения
         /// </summary>
-        public DateTime DateBirthday { get; set; }
+        public DateTime? DateBirthday { get; set; }
 
         /// <summary>
         /// Id пользователя 

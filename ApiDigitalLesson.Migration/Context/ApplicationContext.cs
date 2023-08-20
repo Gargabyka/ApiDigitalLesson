@@ -1,8 +1,9 @@
-﻿using AspDigitalLesson.Model.Entity;
+﻿using ApiDigitalLesson.Migration.Configuration;
+using AspDigitalLesson.Model.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace ApiDigitalLesson.DL.Context
+namespace ApiDigitalLesson.Migration.Context
 {
     /// <summary>
     /// Контекст сущностей
@@ -23,12 +24,25 @@ namespace ApiDigitalLesson.DL.Context
         public DbSet<Teacher> Teacher { get; set; }
         public DbSet<TeacherTypeLesson> TeacherTypeLesson { get; set; }
         public DbSet<TypeLessons> TypeLessons { get; set; }
+        public DbSet<Scheduler> Schedulers { get; set; }
+        public DbSet<SettingsStudent> SettingsStudent { get; set; }
+        public DbSet<SettingsTeacher> SettingsTeacher { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.UseNpgsql(_config["ConnectionStrings:DefaultConnection"],
                 b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName));
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new TypeLessonConfiguration());
+            
+            modelBuilder.Entity<TeacherTypeLesson>()
+                .HasOne(p => p.Teacher)
+                .WithOne()
+                .HasForeignKey<TeacherTypeLesson>(p => p.TeacherId);
         }
     }
 }
