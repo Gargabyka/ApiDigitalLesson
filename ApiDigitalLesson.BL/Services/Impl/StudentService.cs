@@ -24,9 +24,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly IGenericRepository<GroupLesson> _groupLessonsRepository;
         private readonly IGenericRepository<GroupLessonStudents> _groupLessonsStudentsRepository;
         private readonly IGenericRepository<Scheduler> _schedulerGenericRepository;
-        private readonly IGenericRepository<TeacherTypeLesson> _teacherTypeLessonsRepository;
         private readonly IGenericRepository<Teacher> _teacherRepository;
-        private readonly IGenericRepository<SingleLesson> _singleLessonRepository;
         private readonly IGenericRepository<SettingsStudent> _settingsStudentGenericRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<StudentService> _logger;
@@ -36,9 +34,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             IGenericRepository<Students> studentsRepository,
             IGenericRepository<SingleLesson> singleLessonsRepository, 
             IGenericRepository<GroupLesson> groupLessonsRepository, 
-            IGenericRepository<TeacherTypeLesson> teacherTypeLessonsRepository, 
-            IGenericRepository<Teacher> teacherRepository, 
-            IGenericRepository<SingleLesson> singleLessonRepository,
+            IGenericRepository<Teacher> teacherRepository,
             IGenericRepository<SettingsStudent> settingsStudentGenericRepository,
             IGenericRepository<GroupLessonStudents> groupLessonsStudentsRepository, 
             IGenericRepository<Scheduler> schedulerGenericRepository, 
@@ -50,9 +46,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _studentsRepository = studentsRepository;
             _singleLessonsRepository = singleLessonsRepository;
             _groupLessonsRepository = groupLessonsRepository;
-            _teacherTypeLessonsRepository = teacherTypeLessonsRepository;
             _teacherRepository = teacherRepository;
-            _singleLessonRepository = singleLessonRepository;
             _mapper = mapper;
             _logger = logger;
             _groupLessonsStudentsRepository = groupLessonsStudentsRepository;

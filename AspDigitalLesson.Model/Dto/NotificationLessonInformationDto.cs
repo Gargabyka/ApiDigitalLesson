@@ -23,7 +23,7 @@
         /// <summary>
         /// Причина отмены занятия
         /// </summary>
-        public string CancelMessage { get; set; }
+        public string? CancelMessage { get; set; }
         
         /// <summary>
         /// Название урока

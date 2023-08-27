@@ -1,5 +1,4 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using ApiDigitalLesson.Common.Extension;
 using AspDigitalLesson.Model.Dto;
 using AspDigitalLesson.Model.Entity;
 using AspDigitalLesson.Model.Model;

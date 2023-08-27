@@ -186,7 +186,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             SettingsDto settings, SelectNotificationDto select, string role)
         {
             var lessonInformation = await GetLessonInformation(notificationLessonDto);
-            var message = string.Empty;
+            string message;
 
             if (!select.TelegramId.HasValue)
             {
@@ -265,7 +265,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             SettingsDto settings, SelectNotificationDto select, string role)
         {
             var lessonInformation = await GetLessonInformation(notificationLessonDto);
-            var message = string.Empty;
+            string message;
 
             var request = new EmailRequest()
             {
@@ -364,7 +364,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     return await GetSingleLessonInformation(notificationLessonDto);
                 case LessonEnum.Group:
                     return await GetGroupLessonInformation(notificationLessonDto);
-                    break;
                 default:
                     throw new Exception("Не удалось найти тип урока");
             }

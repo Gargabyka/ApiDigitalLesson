@@ -130,7 +130,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
-                var teachers = _teacherRepository.GetAll();
+                var teachers = await _teacherRepository.GetAll().ToListAsync();
 
                 var result = _mapper.Map<List<TeacherDto>>(teachers);
 

@@ -291,7 +291,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 
                 var result = await _schedulerGenericRepository.GetAll()
                     .Where(x => x.SingleLessonId.HasValue 
-                                && singleLesson.Select(x=>x.Id).Contains(x.SingleLesson.Id))
+                                && singleLesson.Select(lesson=>lesson.Id).Contains(x.SingleLesson.Id))
                     .Select(x => new SingleLessonWithScheduler
                     {
                         Id = x.SingleLesson.Id,

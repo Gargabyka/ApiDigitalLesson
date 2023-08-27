@@ -15,19 +15,16 @@ namespace ApiDigitalLesson.BL.Services.Impl
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<UserIdentity> _userManager;
-        private readonly RoleManager<RoleIdentity> _roleManager;
         private readonly ILogger<UserIdentityService> _logger;
 
         public UserIdentityService(
             IHttpContextAccessor httpContextAccessor, 
             UserManager<UserIdentity> userManager, 
-            ILogger<UserIdentityService> logger,
-            RoleManager<RoleIdentity> roleManager)
+            ILogger<UserIdentityService> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _logger = logger;
-            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -37,7 +34,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
-                var identity = _httpContextAccessor?.HttpContext?.User;
+                var identity = _httpContextAccessor.HttpContext?.User;
 
                 if (identity == null)
                 {

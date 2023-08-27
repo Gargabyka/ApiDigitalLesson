@@ -71,9 +71,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
             {
                 _context.Set<T>().Add(entity);
                 await _context.SaveChangesAsync();
-
-                var id = entity.Id;
-                return id;
+                
+                return entity.Id;
             }
             catch (AddException e)
             {
@@ -87,7 +86,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить сущность
         /// </summary>
-        public async Task UpdateAsync(T entity)
+        public async Task<Guid> UpdateAsync(T entity)
         {
             try
             {
@@ -98,6 +97,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 _context.Set<T>().Attach(entity);
                 _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                
+                return entity.Id;
             }
             catch (Exception e)
             {

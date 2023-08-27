@@ -1,13 +1,9 @@
 ﻿using System.Collections.Immutable;
-using System.Security.Claims;
 using ApiDigitalLesson.BL.Services.Interface;
 using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Model;
-using ApiDigitalLesson.Identity.Models.Entity;
 using AspDigitalLesson.Model.Dto;
 using AspDigitalLesson.Model.Entity;
-using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -19,27 +15,15 @@ namespace ApiDigitalLesson.BL.Services.Impl
     /// </summary>
     public class TypeLessonService : ITypeLessonService 
     {
-        private readonly ClaimsPrincipal _userPrincipal;
-        private readonly UserManager<UserIdentity> _userManager;
         private readonly IGenericRepository<TypeLessons> _typeLessonGenericRepository;
-        private readonly IGenericRepository<Teacher> _teacherGenericRepository;
         private readonly ILogger<TypeLessonService> _logger;
-        private readonly IMapper _mapper;
 
         public TypeLessonService(
-            ClaimsPrincipal userPrincipal, 
-            UserManager<UserIdentity> userManager, 
             IGenericRepository<TypeLessons> typeLessonGenericRepository, 
-            ILogger<TypeLessonService> logger, 
-            IGenericRepository<Teacher> teacherGenericRepository,
-            IMapper mapper)
+            ILogger<TypeLessonService> logger)
         {
-            _userPrincipal = userPrincipal;
-            _userManager = userManager;
             _typeLessonGenericRepository = typeLessonGenericRepository;
             _logger = logger;
-            _teacherGenericRepository = teacherGenericRepository;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -109,7 +93,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
-                var typeLessons = _typeLessonGenericRepository.GetAll();
+                var typeLessons = await _typeLessonGenericRepository.GetAll().ToListAsync();
 
                 var result = typeLessons
                     .AsEnumerable()

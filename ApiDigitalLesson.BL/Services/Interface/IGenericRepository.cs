@@ -26,7 +26,7 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Обновить сущность
         /// </summary>
-        Task UpdateAsync(T entity);
+        Task<Guid> UpdateAsync(T entity);
 
         /// <summary>
         /// Удалить сущность

@@ -32,9 +32,6 @@ namespace ApiDigitalLesson.BL
         /// </summary>
         private static void AddService(IServiceCollection services)
         {
-            services.AddTransient<ClaimsPrincipal>(
-                s => s.GetService<IHttpContextAccessor>().HttpContext.User);
-
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             
             services.AddScoped<IStudentService, StudentService>();

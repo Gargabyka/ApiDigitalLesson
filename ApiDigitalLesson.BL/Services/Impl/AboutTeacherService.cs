@@ -1,5 +1,4 @@
-﻿
-using ApiDigitalLesson.BL.Services.Interface;
+﻿using ApiDigitalLesson.BL.Services.Interface;
 using ApiDigitalLesson.Common.CustomException;
 using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Model;

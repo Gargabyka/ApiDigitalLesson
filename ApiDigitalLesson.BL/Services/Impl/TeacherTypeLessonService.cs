@@ -47,7 +47,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 var result = new TeacherTypeLessonDto
                 {
                     Id = teacherTypeLesson.Id.ToString(),
-                    TypeLessons = new TypeLessonDto()
+                    TypeLessons = new TypeLessonDto
                     {
                         Id = typeLesson.Id,
                         Name = typeLesson.Name,
@@ -85,7 +85,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     .Select(x => new TeacherTypeLessonDto
                     {
                         Id = x.Id.ToString(),
-                        TypeLessons = new TypeLessonDto()
+                        TypeLessons = new TypeLessonDto
                         {
                             Id = x.TypeLessons.Id,
                             Name = x.TypeLessons.Name,
@@ -123,13 +123,13 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 var teacher = await _teacherGenericRepository.GetAsync(Guid.Parse(typeLessonDto.TeacherId));
                 var currentUser = await _identityService.GetCurrentUserAsync();
 
-                if (typeLessonDto.IsOnline.HasValue && typeLessonDto.IsOffline.HasValue &&
+                if (typeLessonDto is {IsOnline: not null, IsOffline: not null} &&
                     !typeLessonDto.IsOffline.Value && !typeLessonDto.IsOnline.Value)
                 {
                     throw new Exception("Надо выбрать минимум один тип проведения урока");
                 }
 
-                if (typeLessonDto.IsSingle.HasValue && typeLessonDto.IsGroup.HasValue &&
+                if (typeLessonDto is {IsSingle: not null, IsGroup: not null} &&
                     !typeLessonDto.IsSingle.Value && !typeLessonDto.IsGroup.Value)
                 {
                     throw new Exception("Надо выбрать минимум один тип проведения урока");
