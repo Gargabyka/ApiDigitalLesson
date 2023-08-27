@@ -1,7 +1,4 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using ApiDigitalLesson.Common.Services.Impl.Telegram;
-using ApiDigitalLesson.Identity.Models.Const;
-using ApiDigitalLesson.Identity.Models.Enums;
 using AspDigitalLesson.Model.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +9,7 @@ namespace ApiDigitalLesson.BL.Controller
     /// <summary>
     /// Контролер работы с типов уроков
     /// </summary>
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TypeLessonController : ControllerBase

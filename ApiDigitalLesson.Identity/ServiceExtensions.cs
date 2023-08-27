@@ -1,11 +1,15 @@
-﻿using System.Text;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using ApiDigitalLesson.Common.Model;
 using ApiDigitalLesson.Identity.Contexts;
 using ApiDigitalLesson.Identity.Models.Dto;
 using ApiDigitalLesson.Identity.Models.Entity;
 using ApiDigitalLesson.Identity.Services.Impl;
 using ApiDigitalLesson.Identity.Services.Interface;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -28,14 +32,19 @@ namespace ApiDigitalLesson.Identity
 
             services.AddDbContext<IdentityContext>();
 
-            services.AddIdentity<UserIdentity, RoleIdentity>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders()
+            services.AddIdentity<UserIdentity, RoleIdentity>()
+                .AddEntityFrameworkStores<IdentityContext>()
+                .AddDefaultTokenProviders()
                 .AddTokenProvider("MyApp", typeof(DataProtectorTokenProvider<UserIdentity>));
 
             services.AddAuthentication(options =>
             {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+               .AddCookie()
                .AddJwtBearer(o =>
                {
                    o.RequireHttpsMetadata = false;
@@ -53,13 +62,6 @@ namespace ApiDigitalLesson.Identity
                    };
                    o.Events = new JwtBearerEvents()
                    {
-                       OnAuthenticationFailed = c =>
-                       {
-                           c.NoResult();
-                           c.Response.StatusCode = 500;
-                           c.Response.ContentType = "text/plain";
-                           return c.Response.WriteAsync(c.Exception.ToString());
-                       },
                        OnChallenge = context =>
                        {
                            context.HandleResponse();
@@ -76,6 +78,17 @@ namespace ApiDigitalLesson.Identity
                            return context.Response.WriteAsync(result);
                        },
                    };
+               })
+               .AddVkontakte("Vkontakte", options =>
+               {
+                   options.ClientId = configuration["VkAuthentication:ClientId"];
+                   options.ClientSecret = configuration["VkAuthentication:ClientSecret"];
+                   options.Scope.Add("email");
+               })
+               .AddGoogle("Google", options =>
+               {
+                   options.ClientId = configuration["GoogleAuthentication:ClientId"];
+                   options.ClientSecret = configuration["GoogleAuthentication:ClientSecret"];
                });
         }
     }

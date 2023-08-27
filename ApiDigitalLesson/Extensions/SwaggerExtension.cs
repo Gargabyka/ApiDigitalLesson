@@ -1,5 +1,8 @@
-﻿using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace ApiDigitalLesson.Extensions
 {
@@ -16,36 +19,137 @@ namespace ApiDigitalLesson.Extensions
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiDigitalLesson", Version = "v1" });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
-                      Enter 'Bearer' [space] and then your token in the text input below.
-                      \r\n\r\nExample: 'Bearer 12345abcdef'",
-                    In = ParameterLocation.Header,
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-
-                        },
-                        new List<string>()
-                    }
-                });
-
+                AddCustomBearerSwagger(c);
+                AddCustomVkSwagger(c);
+                AddSwaggerGoogleConfiguration(c);
             });
+        }
+
+        /// <summary>
+        /// Настройка конфигурации Bearer
+        /// </summary>
+        /// <param name="options"></param>
+        private static void AddCustomBearerSwagger(SwaggerGenOptions options)
+        {
+            var bearer = new OpenApiSecurityScheme
+            {
+                Description = @"JWT Аутентификация через Bearer
+                Для ввода данных введите Bearer(пробел)(токен)",
+                In = ParameterLocation.Header,
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            };
+            
+            options.AddSecurityDefinition("Bearer", bearer);
+
+            var security = new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+                    },
+                    new List<string>()
+                }
+            };
+
+            options.AddSecurityRequirement(security);
+        }
+
+        /// <summary>
+        /// Настройка конфигурации Vk
+        /// </summary>
+        private static void AddCustomVkSwagger(SwaggerGenOptions options)
+        {
+            var vk = new OpenApiSecurityScheme
+            {
+                 Name = "Authorization",
+                 Description = "ClientId = 51733352",
+                 In = ParameterLocation.Header,
+                 Type = SecuritySchemeType.OAuth2,
+                 Flows = new OpenApiOAuthFlows()
+                 {
+                     Implicit = new OpenApiOAuthFlow()
+                     {
+                         AuthorizationUrl = new Uri("https://oauth.vk.com/authorize"),
+                         Scopes = new Dictionary<string, string> {{"email", "email"}},
+                     }
+                 }
+            };
+            options.AddSecurityDefinition("Vkontakte", vk);
+            var security = new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Vkontakte"
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+                    },
+                    new List<string> {}
+                }
+            };
+            options.AddSecurityRequirement(security);
+            //options.OperationFilter<AddHeaderOperationFilter>();
+            options.OperationFilter<AddResponseHeadersFilter>();
+        }
+        
+        /// <summary>
+        /// Конфигурация swagger под Google
+        /// </summary>
+        private static void AddSwaggerGoogleConfiguration(SwaggerGenOptions swaggerGenOptions) 
+        {
+    
+            var securityScheme = new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Description = "Client Id = 1029338337768-oepqrj7tqakldk3ru3kqcrqs1lelhdsq.apps.googleusercontent.com",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows()
+                {
+                    Implicit = new OpenApiOAuthFlow()
+                    {
+                        AuthorizationUrl = new Uri("https://accounts.google.com/o/oauth2/v2/auth"),
+                        Scopes = new Dictionary<string, string> {{"email", "email"}, {"profile", "profile"}, {"openid", "openid"}},
+                    }
+                },
+            };
+        
+            swaggerGenOptions.AddSecurityDefinition("Google", securityScheme) ;
+
+            var securityRequirements = new OpenApiSecurityRequirement 
+            {
+                {
+                    new OpenApiSecurityScheme 
+                    { 
+                        Reference = new OpenApiReference 
+                        { 
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Google" 
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+                    },
+                    new List<string> {}
+                } 
+            };
+            
+            swaggerGenOptions.AddSecurityRequirement(securityRequirements);
         }
     }
 }

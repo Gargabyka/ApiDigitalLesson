@@ -106,11 +106,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 };
                 return new BaseResponse<AuthenticationResponse>(response, $"Аутентификация {user.UserName}");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Не удалось провести авторизацию пользователя, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -137,7 +137,6 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, request.Role);
-                    //return new BaseResponse<string>("Пользователь успешно зарегистрирован!");
 
                     var verificationUri = await SendVerificationEmail(user, uri);
 
@@ -146,11 +145,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
 
                 return new BaseResponse<string>("Произошла ошибка при регистрации пользователя") {Succeeded = false};
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Не удалось зарегистрировать пользователя, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -171,11 +170,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
 
                 throw new ApiException($"Произошла ошибка при подтверждении аккаунта {user.Email}.") { StatusCode = (int)HttpStatusCode.InternalServerError };
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Не удалось подтвердить email пользователя, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -203,11 +202,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 };
                 await _emailService.PostAsync(emailRequest);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Не удалось сбросить пароль пользователя, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -230,11 +229,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
 
                 throw new ApiException($"Произошла ошибка при восстановлении пароля. Пожалуйста повторите попытку.");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Не удалось восстановить пароль пользователя, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -281,11 +280,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 await _signInManager.SignInAsync(user, false);
                 return new BaseResponse<AuthenticationResponse>(response, $"Аутентификация {user.UserName}");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Не удалось обновить токен пользователя, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -307,11 +306,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
 
                 return new BaseResponse<string>(emailOrName, message: $"Logout.");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Не удалось выйти из системы, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -345,11 +344,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
 
                 return userListDto;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Не удалось получить список пользователей, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -390,11 +389,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                     signingCredentials: signingCredentials);
                 return jwtSecurityToken;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Произошла ошибка при генерации токена, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -414,11 +413,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 }
                 return newRefreshToken;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Произошла ошибка при обновлении токена, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
 
@@ -450,11 +449,11 @@ namespace ApiDigitalLesson.Identity.Services.Impl
 
                 return verificationUri;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message = $"Произошла ошибка при отправки письма, {e.InnerException}";
                 _logger.LogError(message);
-                throw new System.Exception(message);
+                throw new Exception(message);
             }
         }
     }

@@ -14,6 +14,16 @@ builder.Host.UseSerilog((context, logConfig) => logConfig
     .ReadFrom.Configuration(context.Configuration)        
     .WriteTo.Console());
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Test", policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 // Add services to the container.
 builder.Services.AddCustomSwagger();
 builder.Services.AddSingleton(config);
@@ -29,7 +39,6 @@ builder.Services.AddControllers()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 //if (builder != null)
@@ -41,8 +50,20 @@ builder.Services.AddHttpContextAccessor();
 //    await DefaultAdmin.SeedAsync(userManager);
 //}
 
-
 var app = builder.Build();
+
+app.UseHttpsRedirection();
+app.UseRouting();
+
+app.UseCors("Test");
+
+app.UseSerilogRequestLogging();
+app.UseStaticFiles(); 
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -50,13 +71,5 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseSerilogRequestLogging();
-
-app.MapControllers();
 
 app.Run();

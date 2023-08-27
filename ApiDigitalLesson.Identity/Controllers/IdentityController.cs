@@ -33,7 +33,7 @@ namespace ApiDigitalLesson.Identity.Controllers
                 var result = await _accountService.AuthenticateAsync(request, uri);
                 return Ok(result);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message =
                     $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода AuthenticateAsync";
@@ -52,7 +52,7 @@ namespace ApiDigitalLesson.Identity.Controllers
                 var result = await _accountService.RegisterAsync(request, uri);
                 return Ok(result);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message =
                     $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода RegisterAsync";
@@ -69,7 +69,7 @@ namespace ApiDigitalLesson.Identity.Controllers
             {
                 return Ok(await _accountService.ConfirmEmailAsync(userId, code));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message =
                     $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода ConfirmEmailAsync";
@@ -88,7 +88,7 @@ namespace ApiDigitalLesson.Identity.Controllers
                 await _accountService.ForgotPasswordAsync(request, uri);
                 return Ok();
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message =
                     $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода ForgotPasswordAsync";
@@ -105,7 +105,7 @@ namespace ApiDigitalLesson.Identity.Controllers
             {
                 return Ok(await _accountService.ResetPasswordAsync(userId, request));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message =
                     $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода ResetPasswordAsync";
@@ -122,7 +122,7 @@ namespace ApiDigitalLesson.Identity.Controllers
             {
                 return Ok(await _accountService.RefreshTokenAsync(request));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message =
                     $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода RefreshTokenAsync";
@@ -140,7 +140,7 @@ namespace ApiDigitalLesson.Identity.Controllers
             {
                 return Ok(await _accountService.LogoutAsync(emailOrName));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message =
                     $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода LogoutAsync";
@@ -159,7 +159,7 @@ namespace ApiDigitalLesson.Identity.Controllers
                 var userList = await _accountService.GetUsers();
                 return Ok(new BaseResponse<IReadOnlyList<UserListDto>>(userList));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 var message =
                     $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода GetUsersAsync";
