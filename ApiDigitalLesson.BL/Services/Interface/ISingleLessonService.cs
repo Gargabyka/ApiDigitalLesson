@@ -23,7 +23,7 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Создание индивидуального урока
         /// </summary>
-        Task<ActionResult> CreateSingleLessonAsync(CreateSingleLessonDto data);
+        Task CreateSingleLessonAsync(CreateSingleLessonDto data);
 
         /// <summary>
         /// Получить список неподтвержденных уроков пользователя
@@ -33,11 +33,11 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Подтвердить индивидуальный урок урок
         /// </summary>
-        Task<IActionResult> ConfirmSingleLessonAsync(string id);
+        Task ConfirmSingleLessonAsync(string id);
 
         /// <summary>
         /// Отменить индивидуальный урок
         /// </summary>
-        Task<IActionResult> CancelSingleLessonAsync(string id, string description);
+        Task CancelSingleLessonAsync(string id, string description);
     }
 }

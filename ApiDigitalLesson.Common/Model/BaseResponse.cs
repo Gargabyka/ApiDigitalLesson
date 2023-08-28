@@ -14,16 +14,24 @@
         {
             Message = message;
         }
+
+        public BaseResponse(bool succeeded)
+        {
+            Succeeded = succeeded;
+        }
+        
         public BaseResponse(string? message, bool succeeded)
         {
             Message = message;
             Succeeded = succeeded;
         }
+        
         public BaseResponse(T data, string? message = null)
         {
             Message = message;
             Data = data;
         }
+        
         public BaseResponse(T data, bool succeeded, string? message = null)
         {
             Message = message;

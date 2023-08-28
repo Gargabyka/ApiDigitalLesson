@@ -15,12 +15,12 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Создать новый тип урока
         /// </summary>
-        Task<IActionResult> CreateTypeLessonAsync(TypeLessonDto typeLesson);
+        Task CreateTypeLessonAsync(TypeLessonDto typeLesson);
         
         /// <summary>
         /// Обновить данные урока
         /// </summary>
-        Task<IActionResult> UpdateTypeLessonAsync(TypeLessonDto typeLesson);
+        Task UpdateTypeLessonAsync(TypeLessonDto typeLesson);
         
         /// <summary>
         /// Получить типы уроков

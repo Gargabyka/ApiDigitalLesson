@@ -29,12 +29,12 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Создание выходных для преподавателя
         /// </summary>
-        Task<IActionResult> CreateWeekendForTeacherAsync(SchedulerDto scheduler);
+        Task<BaseResponse<string>> CreateWeekendForTeacherAsync(SchedulerDto scheduler);
 
         /// <summary>
         /// Создание нового преподавателя
         /// </summary>
-        Task<IActionResult> CreateTeacherAsync(TeacherDto teacherDto, string userId);
+        Task CreateTeacherAsync(TeacherDto teacherDto, string userId);
 
         /// <summary>
         /// Получить преподавателя по Id
@@ -44,7 +44,7 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Обновить информацию по преподавателю
         /// </summary>
-        Task<IActionResult> UpdateTeacherAsync(TeacherDto teacherDto);
+        Task UpdateTeacherAsync(TeacherDto teacherDto);
 
         /// <summary>
         /// Получить расписание преподавателя
@@ -59,6 +59,6 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Обновить настройки преподавателя
         /// </summary> 
-        Task<IActionResult> UpdateTeacherSettingsAsync(SettingsTeacherDto teacherDto, string teacherId);
+        Task UpdateTeacherSettingsAsync(SettingsTeacherDto teacherDto, string teacherId);
     }
 }
