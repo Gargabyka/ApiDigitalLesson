@@ -116,7 +116,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Создание студента по UserId
         /// </summary>
-        public async Task<IActionResult> CreateStudentsAsync(StudentsDto student, string id)
+        public async Task CreateStudentsAsync(StudentsDto student, string id)
         {
             try
             {
@@ -185,8 +185,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                         $"Уважаемый(ая) {student.Surname} {student.Name} {student.MiddleName}, вы успешно привязали телеграмм к своему аккаунту";
                     await _telegramService.SendMessageAsync(student.TelegramId.Value, message);
                 }
-                
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -199,7 +197,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить настройки студента
         /// </summary>
-        public async Task<IActionResult> UpdateStudentSettingsAsync(StudentSettingsDto settingsDto, string studentId)
+        public async Task UpdateStudentSettingsAsync(StudentSettingsDto settingsDto, string studentId)
         {
             try
             {
@@ -226,8 +224,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 settings.IsCancelLessonEmail = settingsDto.IsCancelLessonEmail;
 
                 await _settingsStudentGenericRepository.UpdateAsync(settings);
-
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -240,7 +236,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить данные студента
         /// </summary>
-        public async Task<IActionResult> UpdateStudentsAsync(StudentsDto studentsDto)
+        public async Task UpdateStudentsAsync(StudentsDto studentsDto)
         {
             try
             {
@@ -280,8 +276,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                         $"Уважаемый(ая) {student.Surname} {student.Name} {student.MiddleName}, вы успешно привязали телеграмм к своему аккаунту";
                     await _telegramService.SendMessageAsync(student.TelegramId.Value, message);
                 }
-
-                return new OkResult();
             }
             catch (Exception e)
             {

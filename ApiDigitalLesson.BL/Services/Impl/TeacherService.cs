@@ -205,7 +205,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Создание нового преподавателя
         /// </summary>
-        public async Task<IActionResult> CreateTeacherAsync(TeacherDto teacherDto, string userId)
+        public async Task CreateTeacherAsync(TeacherDto teacherDto, string userId)
         {
             try
             {
@@ -276,8 +276,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                         $"Уважаемый(ая) {teacher.Surname} {teacher.Name} {teacher.MiddleName}, вы успешно привязали телеграмм к своему аккаунту";
                     await _telegramService.SendMessageAsync(teacher.TelegramId.Value, message);
                 }
-                
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -291,7 +289,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить информацию по преподавателю
         /// </summary>
-        public async Task<IActionResult> UpdateTeacherAsync(TeacherDto teacherDto)
+        public async Task UpdateTeacherAsync(TeacherDto teacherDto)
         {
             try
             {
@@ -326,8 +324,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                         $"Уважаемый(ая) {teacher.Surname} {teacher.Name} {teacher.MiddleName}, вы успешно привязали телеграмм к своему аккаунту";
                     await _telegramService.SendMessageAsync(teacher.TelegramId.Value, message);
                 }
-
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -340,7 +336,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить настройки преподавателя
         /// </summary> 
-        public async Task<IActionResult> UpdateTeacherSettingsAsync(SettingsTeacherDto teacherDto, string teacherId)
+        public async Task UpdateTeacherSettingsAsync(SettingsTeacherDto teacherDto, string teacherId)
         {
             try
             {
@@ -369,8 +365,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 settings.TimeCreateLesson = teacherDto.TimeCreateLesson;
                 
                 await _settingsTeacherGenericRepository.UpdateAsync(settings);
-                
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -383,7 +377,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Создание выходных для преподавателя
         /// </summary>
-        public async Task<IActionResult> CreateWeekendForTeacherAsync(SchedulerDto scheduler)
+        public async Task<BaseResponse<string>> CreateWeekendForTeacherAsync(SchedulerDto scheduler)
         {
             try
             {
@@ -413,7 +407,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
                 if (intersection)
                 {
-                    return new BadRequestResult();
+                    return new BaseResponse<string>("Найдено пересечение дат", false);
                 }
 
                 var weekend = new Scheduler()
@@ -427,7 +421,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
                 await _schedulerGenericRepository.AddAsync(weekend);
 
-                return new OkResult();
+                return new BaseResponse<string>(true);
             }
             catch (Exception e)
             {

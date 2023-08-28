@@ -116,7 +116,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Создать тип урока преподавателя
         /// </summary>
-        public async Task<IActionResult> CreateTeacherTypeLessonAsync(TeacherTypeLessonDto typeLessonDto)
+        public async Task CreateTeacherTypeLessonAsync(TeacherTypeLessonDto typeLessonDto)
         {
             try
             {
@@ -161,8 +161,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
 
                 await _teacherTypeLessonGenericRepository.AddAsync(teacherTypeLesson);
-
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -175,7 +173,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить тип урока преподавателя
         /// </summary>
-        public async Task<IActionResult> UpdateTeacherTypeLessonAsync(TeacherTypeLessonDto typeLessonDto)
+        public async Task UpdateTeacherTypeLessonAsync(TeacherTypeLessonDto typeLessonDto)
         {
             try
             {
@@ -197,8 +195,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 teacherTypeLesson.Price = typeLessonDto.Price ?? teacherTypeLesson.Price;
 
                 await _teacherTypeLessonGenericRepository.UpdateAsync(teacherTypeLesson);
-
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -211,7 +207,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Удалить тип урока преподавателя
         /// </summary>
-        public async Task<IActionResult> DeleteTeacherTypeLessonAsync(string id)
+        public async Task DeleteTeacherTypeLessonAsync(string id)
         {
             try
             {
@@ -226,8 +222,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 }
 
                 await _teacherTypeLessonGenericRepository.DeleteAsync(Guid.Parse(id));
-
-                return new OkResult();
             }
             catch (Exception e)
             {

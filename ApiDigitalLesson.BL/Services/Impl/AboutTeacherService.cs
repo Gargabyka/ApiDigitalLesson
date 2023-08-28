@@ -119,7 +119,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Создать отзыв о преподавателе
         /// </summary>
-        public async Task<IActionResult> CreateAboutTeacherAsync(AboutTeacherDto aboutTeacherDto)
+        public async Task CreateAboutTeacherAsync(AboutTeacherDto aboutTeacherDto)
         {
             try
             {
@@ -147,8 +147,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
 
                 await _aboutTeacherRepository.AddAsync(teacherAbout);
-
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -162,7 +160,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Удалить отзыв о преподавателе
         /// </summary>
-        public async Task<IActionResult> DeleteAboutTeacherAsync(string aboutId)
+        public async Task DeleteAboutTeacherAsync(string aboutId)
         {
             try
             {
@@ -180,8 +178,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 }
 
                 await _aboutTeacherRepository.DeleteAsync(about.Id);
-
-                return new OkResult();
             }
             catch (Exception e)
             {

@@ -24,12 +24,12 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Создать студента
         /// </summary>
-        Task<IActionResult> CreateStudentsAsync(StudentsDto students, string id);
+        Task CreateStudentsAsync(StudentsDto students, string id);
 
         /// <summary>
         /// Обновить студента
         /// </summary>
-        Task<IActionResult> UpdateStudentsAsync(StudentsDto students);
+        Task UpdateStudentsAsync(StudentsDto students);
 
         /// <summary>
         /// Получить всех преподавателей студента
@@ -44,6 +44,6 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Обновить настройки студента
         /// </summary>
-        Task<IActionResult> UpdateStudentSettingsAsync(StudentSettingsDto settingsDto, string studentId);
+        Task UpdateStudentSettingsAsync(StudentSettingsDto settingsDto, string studentId);
     }
 }

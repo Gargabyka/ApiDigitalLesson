@@ -29,7 +29,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Создать новый тип урока
         /// </summary>
-        public async Task<IActionResult> CreateTypeLessonAsync(TypeLessonDto typeLesson)
+        public async Task CreateTypeLessonAsync(TypeLessonDto typeLesson)
         {
             try
             {
@@ -43,8 +43,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
 
                 await _typeLessonGenericRepository.AddAsync(result);
-
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -58,7 +56,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить данные урока
         /// </summary>
-        public async Task<IActionResult> UpdateTypeLessonAsync(TypeLessonDto typeLesson)
+        public async Task UpdateTypeLessonAsync(TypeLessonDto typeLesson)
         {
             try
             {
@@ -74,9 +72,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 lesson.Description = typeLesson.Description;
                 
                 await _typeLessonGenericRepository.UpdateAsync(lesson);
-
-                return new OkResult();
-
             }
             catch (Exception e)
             {

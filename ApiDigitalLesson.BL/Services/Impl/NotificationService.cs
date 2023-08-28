@@ -64,7 +64,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Отправить уведомление
         /// </summary>
-        public async Task<IActionResult> SendNotification(NotificationLessonDto notificationLesson)
+        public async Task SendNotification(NotificationLessonDto notificationLesson)
         {
             try
             {
@@ -150,8 +150,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     default:
                         throw new Exception("Не удалось найти роль пользователя");
                 }
-
-                return new OkResult();
             }
             catch (Exception e)
             {

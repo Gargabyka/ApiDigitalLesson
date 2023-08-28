@@ -18,12 +18,12 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Создать отзыв о преподавателе
         /// </summary>
-        Task<IActionResult> CreateAboutTeacherAsync(AboutTeacherDto aboutTeacherDto);
+        Task CreateAboutTeacherAsync(AboutTeacherDto aboutTeacherDto);
 
         /// <summary>
         /// Удалить отзыв о преподавателе
         /// </summary>
-        Task<IActionResult> DeleteAboutTeacherAsync(string aboutId);
+        Task DeleteAboutTeacherAsync(string aboutId);
 
         /// <summary>
         /// Получить среднюю оценку преподавателя

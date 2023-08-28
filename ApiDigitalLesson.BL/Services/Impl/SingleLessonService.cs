@@ -172,7 +172,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Создание индивидуального урока
         /// </summary>
-        public async Task<ActionResult> CreateSingleLessonAsync(CreateSingleLessonDto data)
+        public async Task CreateSingleLessonAsync(CreateSingleLessonDto data)
         {
             try
             {
@@ -252,8 +252,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
 
                 await _schedulerGenericRepository.AddAsync(scheduler);
-
-                return new OkResult();
             }
             catch (AddException e)
             {
@@ -334,7 +332,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Подтвердить индивидуальный урок урок
         /// </summary>
-        public async Task<IActionResult> ConfirmSingleLessonAsync(string id)
+        public async Task ConfirmSingleLessonAsync(string id)
         {
             try
             {
@@ -404,8 +402,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
 
                 await _notificationService.SendNotification(notification);
-
-                return new OkResult();
             }
             catch (Exception e)
             {
@@ -418,7 +414,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Отменить индивидуальный урок
         /// </summary>
-        public async Task<IActionResult> CancelSingleLessonAsync(string id, string description)
+        public async Task CancelSingleLessonAsync(string id, string description)
         {
             try
             {
@@ -448,8 +444,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
                         await CancelSingleLessonTeacherAsync(description, lesson);
                         break;
                 }
-
-                return new OkResult();
             }
             catch (Exception e)
             {

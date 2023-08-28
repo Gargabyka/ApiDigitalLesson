@@ -12,6 +12,6 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Отправить уведомление
         /// </summary>
-        Task<IActionResult> SendNotification(NotificationLessonDto notificationLesson);
+        Task SendNotification(NotificationLessonDto notificationLesson);
     }
 }

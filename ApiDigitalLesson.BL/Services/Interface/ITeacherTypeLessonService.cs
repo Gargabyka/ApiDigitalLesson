@@ -23,16 +23,16 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Создать тип урока преподавателя
         /// </summary>
-        Task<IActionResult> CreateTeacherTypeLessonAsync(TeacherTypeLessonDto typeLessonDto);
+        Task CreateTeacherTypeLessonAsync(TeacherTypeLessonDto typeLessonDto);
 
         /// <summary>
         /// Обновить тип урока преподавателя
         /// </summary>
-        Task<IActionResult> UpdateTeacherTypeLessonAsync(TeacherTypeLessonDto typeLessonDto);
+        Task UpdateTeacherTypeLessonAsync(TeacherTypeLessonDto typeLessonDto);
 
         /// <summary>
         /// Удалить тип урока преподавателя
         /// </summary>
-        Task<IActionResult> DeleteTeacherTypeLessonAsync(string id);
+        Task DeleteTeacherTypeLessonAsync(string id);
     }
 }
