@@ -16,7 +16,7 @@ namespace ApiDigitalLesson.BL.Services.Interface
         Task<BaseResponse<TeacherDto>> GetTeacherUserAsync(string? userId);
 
         /// <summary>
-        /// Получить список преподователей
+        /// Получить список преподавателей
         /// </summary>
         Task<BaseResponse<List<TeacherDto>>> GetTeachersLessonAsync();
 

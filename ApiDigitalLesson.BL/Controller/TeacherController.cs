@@ -58,6 +58,42 @@ namespace ApiDigitalLesson.BL.Controller
             }
         }
         
+        [HttpGet("GetTeachersLesson")]
+        public async Task<IActionResult> GetTeachersLessonAsync()
+        {
+            try
+            {
+                var result = await _teacherService.GetTeachersLessonAsync();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var message =
+                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода GetTeachersLessonAsync";
+                
+                _logger.LogError(e,message);
+                return StatusCode(500, message);
+            }
+        }
+        
+        [HttpGet("GetTeachersWithTypeLessonAsync")]
+        public async Task<IActionResult> GetTeachersWithTypeLessonAsync()
+        {
+            try
+            {
+                var result = await _teacherService.GetTeachersWithTypeLessonAsync();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var message =
+                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода GetTeachersWithTypeLessonAsync";
+                
+                _logger.LogError(e,message);
+                return StatusCode(500, message);
+            }
+        }
+        
         [HttpPost("CreateTeacher")]
         public async Task<IActionResult> CreateTeacherAsync(TeacherDto teacherDto, string userId)
         {
