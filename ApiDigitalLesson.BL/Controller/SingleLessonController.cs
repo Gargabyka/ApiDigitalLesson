@@ -81,8 +81,8 @@ namespace ApiDigitalLesson.BL.Controller
         {
             try
             {
-                var result = await _singleLessonService.CreateSingleLessonAsync(data);
-                return Ok(result);
+                await _singleLessonService.CreateSingleLessonAsync(data);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -99,8 +99,8 @@ namespace ApiDigitalLesson.BL.Controller
         {
             try
             {
-                var result = await _singleLessonService.ConfirmSingleLessonAsync(lessonId);
-                return Ok(result);
+                await _singleLessonService.ConfirmSingleLessonAsync(lessonId);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -117,8 +117,8 @@ namespace ApiDigitalLesson.BL.Controller
         {
             try
             {
-                var result = await _singleLessonService.CancelSingleLessonAsync(lessonId, description);
-                return Ok(result);
+                await _singleLessonService.CancelSingleLessonAsync(lessonId, description);
+                return Ok();
             }
             catch (Exception e)
             {

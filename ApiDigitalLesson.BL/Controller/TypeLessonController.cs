@@ -31,8 +31,8 @@ namespace ApiDigitalLesson.BL.Controller
         {
             try
             {
-                var result = await _typeLessonService.CreateTypeLessonAsync(typeLessonDto);
-                return Ok(result);
+                await _typeLessonService.CreateTypeLessonAsync(typeLessonDto);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -50,8 +50,8 @@ namespace ApiDigitalLesson.BL.Controller
         {
             try
             {
-                var result = await _typeLessonService.UpdateTypeLessonAsync(typeLessonDto);
-                return Ok(result);
+                await _typeLessonService.UpdateTypeLessonAsync(typeLessonDto);
+                return Ok();
             }
             catch (Exception e)
             {

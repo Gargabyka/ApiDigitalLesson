@@ -63,8 +63,8 @@ namespace ApiDigitalLesson.BL.Controller
         {
             try
             {
-                var result = await _studentsService.CreateStudentsAsync(students, id);
-                return Ok(result);
+                await _studentsService.CreateStudentsAsync(students, id);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -81,8 +81,8 @@ namespace ApiDigitalLesson.BL.Controller
         {
             try
             {
-                var result = await _studentsService.UpdateStudentsAsync(students);
-                return Ok(result);
+                await _studentsService.UpdateStudentsAsync(students);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -99,8 +99,8 @@ namespace ApiDigitalLesson.BL.Controller
         {
             try
             {
-                var result = await _studentsService.UpdateStudentSettingsAsync(settingsDto, studentId);
-                return Ok(result);
+                await _studentsService.UpdateStudentSettingsAsync(settingsDto, studentId);
+                return Ok();
             }
             catch (Exception e)
             {
