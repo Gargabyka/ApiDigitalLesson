@@ -1,5 +1,7 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
+using AspDigitalLesson.Model.Const;
 using AspDigitalLesson.Model.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +10,7 @@ namespace ApiDigitalLesson.BL.Controller
     /// <summary>
     /// Контроллер для работы с отзывами о пользователе
     /// </summary>
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AboutTeacherController : ControllerBase
@@ -77,6 +79,7 @@ namespace ApiDigitalLesson.BL.Controller
             }
         }
 
+        [Authorize(Roles = Roles.Admin +","+ Roles.Moderator)]
         [HttpPost("DeleteAboutTeacher")]
         public async Task<IActionResult> DeleteAboutTeacherAsync(string id)
         {

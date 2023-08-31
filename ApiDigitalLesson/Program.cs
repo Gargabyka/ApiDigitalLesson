@@ -41,14 +41,14 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 
-//if (builder != null)
-//{
-//    var provider = builder.Services.BuildServiceProvider();
-//    var userManager = provider.GetRequiredService<UserManager<User>>();
-//    var roleManager = provider.GetRequiredService<RoleManager<Role>>();
-//    await DefaultRoles.SeedAsync(roleManager);
-//    await DefaultAdmin.SeedAsync(userManager);
-//}
+// if (builder != null)
+// {
+//     var provider = builder.Services.BuildServiceProvider();
+//     var userManager = provider.GetRequiredService<UserManager<UserIdentity>>();
+//     var roleManager = provider.GetRequiredService<RoleManager<RoleIdentity>>();
+//     await DefaultRoles.SeedAsync(roleManager);
+//     await DefaultUser.CreateDefaultUser(userManager);
+// }
 
 var app = builder.Build();
 

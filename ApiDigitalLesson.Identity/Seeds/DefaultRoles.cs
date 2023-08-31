@@ -32,6 +32,14 @@ namespace ApiDigitalLesson.Identity.Seeds
                     Name = Roles.Student.ToString()
                 });
             }
+
+            if (!roleManager.Roles.Any(x => x.Name == Roles.Moderator.ToString()))
+            {
+                await roleManager.CreateAsync(new RoleIdentity()
+                {
+                    Name = Roles.Moderator.ToString()
+                });
+            }
         }
     }
 }
