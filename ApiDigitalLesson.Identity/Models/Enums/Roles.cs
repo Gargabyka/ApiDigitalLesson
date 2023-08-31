@@ -19,5 +19,10 @@
         /// Студент
         /// </summary>
         Student,
+        
+        /// <summary>
+        /// Модератор
+        /// </summary>
+        Moderator
     }
 }

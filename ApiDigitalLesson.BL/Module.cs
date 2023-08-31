@@ -43,6 +43,8 @@ namespace ApiDigitalLesson.BL
             services.AddScoped<IUserIdentityService, UserIdentityService>();
             services.AddScoped<ISingleLessonService, SingleLessonService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IModeratorService, ModeratorService>();
+            services.AddScoped<IViolatorsService, ViolatorsService>();
         }
 
     }

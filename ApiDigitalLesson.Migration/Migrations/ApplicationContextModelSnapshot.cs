@@ -110,6 +110,45 @@ namespace ApiDigitalLesson.Migration.Migrations
                     b.ToTable("GroupLessonStudents");
                 });
 
+            modelBuilder.Entity("AspDigitalLesson.Model.Entity.Moderator", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DateBirthday")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MiddleName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Moderators");
+                });
+
             modelBuilder.Entity("AspDigitalLesson.Model.Entity.Scheduler", b =>
                 {
                     b.Property<Guid>("Id")
@@ -414,7 +453,8 @@ namespace ApiDigitalLesson.Migration.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TeacherId");
+                    b.HasIndex("TeacherId")
+                        .IsUnique();
 
                     b.HasIndex("TypeLessonsId");
 
@@ -449,766 +489,809 @@ namespace ApiDigitalLesson.Migration.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6d08d5f3-a354-471d-9256-0389d819312a"),
+                            Id = new Guid("28550ab6-d634-4713-8332-ec614736750c"),
                             Category = 0,
                             Name = "ЕГЭ"
                         },
                         new
                         {
-                            Id = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94"),
+                            Id = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66"),
                             Category = 1,
                             Name = "ОГЭ"
                         },
                         new
                         {
-                            Id = new Guid("89c9f848-8e0a-47d0-9111-bf242f16bfaf"),
+                            Id = new Guid("6f9369db-2e71-46cc-96b0-2005578c06de"),
                             Category = 2,
                             Name = "Технические науки"
                         },
                         new
                         {
-                            Id = new Guid("2bc0427d-8e20-4ef2-9a8e-33435da65d25"),
+                            Id = new Guid("8eb6f981-9b28-4106-ae74-e740c290d735"),
                             Category = 3,
                             Name = "Естественные науки"
                         },
                         new
                         {
-                            Id = new Guid("e5657289-658e-4d7c-baa8-e7f113ed0a05"),
+                            Id = new Guid("7f3e6e40-6602-4fd2-8295-80bccf652e2a"),
                             Category = 4,
                             Name = "Гуманитарные науки"
                         },
                         new
                         {
-                            Id = new Guid("21e0d888-4c31-4f75-bc79-7375dfc98c29"),
+                            Id = new Guid("b0da7df0-615b-47cd-a452-e06f8b421870"),
                             Category = 5,
                             Name = "Программирование"
                         },
                         new
                         {
-                            Id = new Guid("238e4d81-72f9-4c6f-984d-36b4f97a384d"),
+                            Id = new Guid("32c656d2-645b-4a81-ac8c-0921d9f54f47"),
                             Category = 6,
                             Name = "Школьная программа"
                         },
                         new
                         {
-                            Id = new Guid("09353c58-a5a2-4ee3-a37f-8d6a4fe66534"),
+                            Id = new Guid("ca79d740-62e6-4027-8f08-c5fecc21af23"),
                             Category = 7,
                             Name = "Музыка"
                         },
                         new
                         {
-                            Id = new Guid("df2489c9-f8d0-443e-88ed-05eb06e40f99"),
+                            Id = new Guid("17017be0-5efb-46e7-824d-ebb0beeb55f6"),
                             Category = 8,
                             Name = "Искусство"
                         },
                         new
                         {
-                            Id = new Guid("2f301787-8670-4f32-b67e-f1f9d322c46e"),
+                            Id = new Guid("33f906a8-e2d1-4dba-94da-ab9905262282"),
                             Name = "Математика (базовый уровень)",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("acc1b24c-6fe6-4828-8ef5-dccd22c34b27"),
+                            Id = new Guid("977c39a4-5960-4f6a-8c29-bccc5487bf7c"),
                             Name = "Математика (профильный уровень)",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("3893b9a9-1a6c-405c-b761-658e68884487"),
+                            Id = new Guid("fd49d3c5-5a69-4268-b1d5-f93c634abb16"),
                             Name = "Русский язык",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("3f99412c-525f-452f-889a-2df21606ccde"),
+                            Id = new Guid("14dfc8b4-4c3d-439b-b623-272e3eaddf35"),
                             Name = "Литература",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("0dc76da2-1b40-4f61-bafa-0523c9719046"),
+                            Id = new Guid("d8ba5948-ebdb-472b-acd5-17c8c232b332"),
                             Name = "Физика",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("ef7f5899-958c-4668-a5cd-84c56e7fe6ae"),
+                            Id = new Guid("1a8fb7c9-6170-4f79-9930-9c70624c0901"),
                             Name = "Химия",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("266aad92-bd36-424a-a6a8-72441c53d47c"),
+                            Id = new Guid("3542baad-dab4-45c9-a8d9-8444f318acf0"),
                             Name = "История",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("e1147ca7-18a6-4c9e-aca3-a2da6b24b26b"),
+                            Id = new Guid("336ba2a2-c56d-4bb8-acf1-c428d843ed7e"),
                             Name = "Обществознание",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("b4a3dafe-c14f-443b-b41a-7343252d91be"),
+                            Id = new Guid("f48f105e-4998-4309-8aa2-f27e9c88d8c9"),
                             Name = "Информатика",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("3e3bff0b-0bd7-4868-acfa-5abd60343afd"),
+                            Id = new Guid("de4a4ce1-0711-4ea9-9894-c5436d815f7b"),
                             Name = "Биология",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("b1e0f996-a144-45af-8b8e-dabdc135d10a"),
+                            Id = new Guid("ea0e583b-8f30-4721-8f24-4ccd4b72aa73"),
                             Name = "География",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("d84bf898-0ca4-4bdb-821c-84c9f3fd8719"),
+                            Id = new Guid("8c3750f7-7018-46ad-88ec-b9620b2102eb"),
                             Name = "Английский язык",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("8409c4e6-af90-4207-9733-9094698075f8"),
+                            Id = new Guid("fbe62f85-75df-4b01-8568-219a72c1df34"),
                             Name = "Немецкий язык",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("e1e0872e-bbf7-476c-b534-e0e369a823ad"),
+                            Id = new Guid("50d180cd-ffa0-488a-b7ae-fddde50fdde7"),
                             Name = "Французский язык",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("6712628e-cd6d-4e6c-8cfb-01919dcbb142"),
+                            Id = new Guid("0526434a-dd72-4ea0-a8e3-a0c3767b0974"),
                             Name = "Китайский язык",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("42d1b0c4-9620-4965-a369-51a4608ccfe4"),
+                            Id = new Guid("d00ccd2d-007a-49d3-8af9-766c98ff48e1"),
                             Name = "Испанский язык",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("19fc4d02-2a63-467f-a0ec-1607d3e481bc"),
+                            Id = new Guid("4711ea4f-3a2b-47fe-ad2c-8654dfec817d"),
                             Name = "География",
-                            ParentId = new Guid("6d08d5f3-a354-471d-9256-0389d819312a")
+                            ParentId = new Guid("28550ab6-d634-4713-8332-ec614736750c")
                         },
                         new
                         {
-                            Id = new Guid("03233261-393a-4191-986c-2756e8dd0ba9"),
+                            Id = new Guid("5877ed5b-f3d9-411b-a3e7-df62b5eeae55"),
                             Name = "Математика",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("9b1003f4-8bb8-4963-b63d-ec1a1122224b"),
+                            Id = new Guid("82aa4329-4e9f-4f88-851c-03daa20eb3c4"),
                             Name = "Русский язык",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("58921973-e542-45a9-8e8b-05a88b4325bb"),
+                            Id = new Guid("f76b10c1-4d1c-4080-9abb-0b439e815f3c"),
                             Name = "Литература",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("decb4274-8a2f-4599-b9a2-b69fcf0bd68e"),
+                            Id = new Guid("2f52d145-6893-424d-b18e-53e2ec668ca7"),
                             Name = "Физика",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("6604ce92-3411-41ce-b8a1-290099b47916"),
+                            Id = new Guid("d1b56a1a-1128-4310-b6a7-083d73007942"),
                             Name = "Химия",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("f0e19e19-3511-422f-9d69-d572858b963b"),
+                            Id = new Guid("39fd1fcb-474e-47b6-8036-51bd8f31ee43"),
                             Name = "История",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("0fa97d5a-162e-46c8-9713-bb5f84f013be"),
+                            Id = new Guid("d07d91a0-d3f9-4479-b9c2-af1480ce143f"),
                             Name = "Обществознание",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("513f1003-db39-415b-b768-ccf14a41ee65"),
+                            Id = new Guid("def05219-8541-4d40-bd3d-e68e065838c2"),
                             Name = "Информатика",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("697da011-12bc-4926-b556-de98f2b5b411"),
+                            Id = new Guid("3edf22e9-b3a8-42f7-842c-09211c5c29a9"),
                             Name = "Биология",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("b72c2365-4177-4351-a493-75c5d97e3bb9"),
+                            Id = new Guid("6bc045b7-be4d-4710-8f57-92cbf8eaed04"),
                             Name = "География",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("9005e7ca-6253-4759-9070-91924c2649e4"),
+                            Id = new Guid("85508c8f-229f-4b6e-b14d-486426387fea"),
                             Name = "Английский язык",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("c544be7b-8a0c-4186-b932-58dfe315c8d6"),
+                            Id = new Guid("70c39bf4-86e7-4cf3-b38a-653327eb8817"),
                             Name = "Немецкий язык",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("8d6e2c3e-a644-438f-a2a8-7b09a68ecc6d"),
+                            Id = new Guid("331482f0-0ada-4bc6-bac6-f91e8e18bc9c"),
                             Name = "Французский язык",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("3d4affb7-8af5-4789-8397-e12d2533edbe"),
+                            Id = new Guid("8c23815a-2678-4b99-a518-d86d8ee5d409"),
                             Name = "Китайский язык",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("7d3babeb-73f6-4f65-93ef-3ca9ef59c4a1"),
+                            Id = new Guid("8adc9a3b-6d47-426b-b4ed-cf8771d6aae1"),
                             Name = "Испанский язык",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("a95fb8bd-37a5-4640-9d75-c7d365d6e02a"),
+                            Id = new Guid("55a2e125-61ea-4e97-9616-7bb8362affa7"),
                             Name = "География",
-                            ParentId = new Guid("cdc1c708-e7da-4a52-a859-e1adaba71e94")
+                            ParentId = new Guid("a5e9dbe9-7159-41be-ac7e-a061d6081c66")
                         },
                         new
                         {
-                            Id = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf"),
+                            Id = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e"),
                             Name = "1-4 класс",
-                            ParentId = new Guid("238e4d81-72f9-4c6f-984d-36b4f97a384d")
+                            ParentId = new Guid("32c656d2-645b-4a81-ac8c-0921d9f54f47")
                         },
                         new
                         {
-                            Id = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e"),
+                            Id = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd"),
                             Name = "5-9 класс",
-                            ParentId = new Guid("238e4d81-72f9-4c6f-984d-36b4f97a384d")
+                            ParentId = new Guid("32c656d2-645b-4a81-ac8c-0921d9f54f47")
                         },
                         new
                         {
-                            Id = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c"),
+                            Id = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34"),
                             Name = "9-11 класс",
-                            ParentId = new Guid("238e4d81-72f9-4c6f-984d-36b4f97a384d")
+                            ParentId = new Guid("32c656d2-645b-4a81-ac8c-0921d9f54f47")
                         },
                         new
                         {
-                            Id = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66"),
+                            Id = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34"),
                             Name = "Народные языки",
-                            ParentId = new Guid("238e4d81-72f9-4c6f-984d-36b4f97a384d")
+                            ParentId = new Guid("32c656d2-645b-4a81-ac8c-0921d9f54f47")
                         },
                         new
                         {
-                            Id = new Guid("e32b98db-e5c9-46d3-9899-ea9046c366dc"),
+                            Id = new Guid("51ca82d9-0bb2-4c49-a76f-801d44895f18"),
                             Name = "Русский язык",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("cb316b6c-51d8-496c-8a02-49c9a53f61a3"),
+                            Id = new Guid("289328f8-1739-436e-ad8f-706f08d34c2a"),
                             Name = "Литературное чтение",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("8861b7a4-edf4-447d-bff7-628f7aaa3c12"),
+                            Id = new Guid("d7b7bd52-254e-42ce-95a3-82eef71c5884"),
                             Name = "Математика",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("86d982e3-0239-4a3e-a64d-c0d7f9945d4f"),
+                            Id = new Guid("2b507fec-af5f-460f-b668-6c86bb6287a4"),
                             Name = "Обществознание",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("ad685dd4-2ac8-41f7-a4b0-a7fe8db576e5"),
+                            Id = new Guid("889d5a7d-24f6-403c-864c-1223e1da4bd8"),
                             Name = "Окружающий мир",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("4f2ac461-02bd-4cd4-9fe4-9879842461e9"),
+                            Id = new Guid("4359a675-d39a-4b4a-98b4-ec143995c7ae"),
                             Name = "ИЗО",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("80eedf05-4a8f-4e68-b22d-73f95a427270"),
+                            Id = new Guid("ca33d986-662c-4301-8c27-a7cf9d75b2ab"),
                             Name = "Музыка",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("efdd17b4-db75-4763-a54e-90d26502d8cd"),
+                            Id = new Guid("acb3ca64-59a8-45af-875c-aa91dae1ee34"),
                             Name = "Технология",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("252d382f-212e-4111-8208-2b42a6ff0da6"),
+                            Id = new Guid("e3f3f156-fbb1-4efd-a148-12b8a6c030a8"),
                             Name = "Физическая культура",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("fe62a969-f4e0-4a26-b690-de6e653edb2f"),
+                            Id = new Guid("86eb1a35-b2ff-4aa0-8aae-cb6722ab48cc"),
                             Name = "Английский язык",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("8f8f9230-1c89-4452-aed1-7eeb9da909b9"),
+                            Id = new Guid("97bdc359-6b82-4dfe-b00b-5684a8281a7b"),
                             Name = "Немецкий язык",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("ac423b5d-d2b5-4062-a275-c3c39346a4e0"),
+                            Id = new Guid("85ea643c-1242-434b-a5a5-5b8975bbfe20"),
                             Name = "Французский язык",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("a022e4ad-f74f-494f-a44f-4e96ba0f30c7"),
+                            Id = new Guid("35933df8-cd79-4ee2-a80a-ab6f6c26d5ee"),
                             Name = "Испанский язык",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("0e439d4e-b215-4c11-afc9-2298c169a949"),
+                            Id = new Guid("d8084754-1165-427d-82b4-901ca401f114"),
                             Name = "Китайский язык",
-                            ParentId = new Guid("944753cd-1031-41ed-91d4-ac2575da8cbf")
+                            ParentId = new Guid("590c5f85-d766-4f8e-bb20-c33d45626f7e")
                         },
                         new
                         {
-                            Id = new Guid("868871b9-1f02-4669-bd12-38038ed2fe66"),
+                            Id = new Guid("056a67b9-e7da-4374-9d99-f2be2689d458"),
                             Name = "Русский язык",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("54593816-78f8-48b3-a0e4-b42f59ff2868"),
+                            Id = new Guid("d7def495-e8db-4cfd-9861-dfa19899f1d2"),
                             Name = "Литература",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("4d8852db-24ce-4230-b8a7-d02b47c2954a"),
+                            Id = new Guid("0e5c1570-8b12-4ade-94ac-bd64853618ab"),
                             Name = "История",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("a9a1893c-bef7-4407-87be-3389bfc4182b"),
+                            Id = new Guid("f95144ed-28fa-4f6f-bdf6-7292b0a5251d"),
                             Name = "Обществознание",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("102d6052-2448-44a2-9cff-8a74e82e2b41"),
+                            Id = new Guid("33210137-05ea-480b-99a3-0c0ac3da9e93"),
                             Name = "География",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("092f4b41-a754-42ad-99a6-134a3c496b53"),
+                            Id = new Guid("795fa263-e7b1-48f5-b3b4-d7d92f358357"),
                             Name = "Алгебра",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("dcc997a0-2b86-406c-86f5-a58d42117331"),
+                            Id = new Guid("99bcb1f4-9e0a-4fbf-9679-9049e0483adb"),
                             Name = "Геометрия",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("2b908a39-b547-49c6-9f64-d849ebdc8880"),
+                            Id = new Guid("fcc2ef09-0a1b-45cb-bd1e-c63448eb7b8f"),
                             Name = "Информатика",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("c3c74480-48d6-4844-824b-5b82560bed3b"),
+                            Id = new Guid("6f56d5c7-e410-40a7-b46d-45f6032e287b"),
                             Name = "Основы духовно-нравственной культуры народов России",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("728217c7-92bf-42f3-9358-a4e46fd8c827"),
+                            Id = new Guid("fe17fe8f-87a8-4d64-af77-5952f4002b14"),
                             Name = "Основы религиозных культур и светской этики",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("feb81f6d-efee-4922-9a3e-e66abbb6fb26"),
+                            Id = new Guid("6fce4f92-2115-4b53-9d82-2532a68dcd17"),
                             Name = "Физика",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("fc96fc1d-464f-4adc-ba66-b8147e8eca04"),
+                            Id = new Guid("abe076c6-818f-4504-add5-339ff357727a"),
                             Name = "Биология",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("fb568fee-183e-4aa6-ab97-b18f470fee0f"),
+                            Id = new Guid("6f01c2c6-08f2-467d-8eb5-420da0fc5814"),
                             Name = "Химия",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("92243da0-ceee-4805-8a17-270a401fbe1c"),
+                            Id = new Guid("dea3e0de-b6d9-401f-8beb-c9f21c8d11b5"),
                             Name = "Изобразительное искусство",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("bf843f04-3ca2-43aa-a9ac-7f01d15916c8"),
+                            Id = new Guid("4689d1c8-1cea-4c16-8537-d5f11edf2fd7"),
                             Name = "Музыка",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("f5b7d9be-2f70-4d4f-b8cc-4bb97e93a87f"),
+                            Id = new Guid("1595ec49-a4e0-4439-9791-5ba955580f97"),
                             Name = "Технология",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("180361ae-10b8-4c44-9f6d-eceedbc57ea0"),
+                            Id = new Guid("7c876f2f-fb72-4e56-bd4c-2b0fc7b4508e"),
                             Name = "Физическая культура",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("f9edfa32-a8fc-4496-a394-5b2bed5231e5"),
+                            Id = new Guid("9288f1a3-fb0c-440f-8a4f-4ee3fd0ecc3f"),
                             Name = "Основы безопасности жизнедеятельности",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("9df41ea1-34cf-436f-874d-57061c76a18a"),
+                            Id = new Guid("68ee1f22-e87d-4c3b-aaae-ccab12a5b1ca"),
                             Name = "Английский язык",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("40ede0b3-846f-4d12-b980-d8fac38c84d3"),
+                            Id = new Guid("fffc260d-cfdc-47c9-baf4-843f153b7a1b"),
                             Name = "Немецкий язык",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("9666d06d-faf4-402c-b7c1-3155982c7c95"),
+                            Id = new Guid("383edfc2-eafb-4514-bf02-c2cfd5c2f56f"),
                             Name = "Французский язык",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("7f48c80e-2e38-471c-a417-ef5d73c45744"),
+                            Id = new Guid("2d55a722-9eb7-47b1-8e0f-95dd2c41331c"),
                             Name = "Испанский язык",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("f5e2d652-13b8-4d3f-9005-9bf0f61e056f"),
+                            Id = new Guid("9a947ff7-1895-478f-98e6-bdcaebec4140"),
                             Name = "Китайский язык",
-                            ParentId = new Guid("558a8b1a-78a3-4a65-9683-3a3f7cc8a02e")
+                            ParentId = new Guid("e293c9db-1204-4ca3-a7c9-54f048ecfbbd")
                         },
                         new
                         {
-                            Id = new Guid("8e8529b1-bb75-40ae-b911-d092ce96f584"),
+                            Id = new Guid("8ae86239-8173-4f66-a6d8-3491ebd56f56"),
                             Name = "Алгебра",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("d5bb906b-8f8a-4fa9-8a55-b339ec0041cf"),
+                            Id = new Guid("bf6831f7-80f1-47f8-ae0f-e06eaac841a7"),
                             Name = "Геометрия",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("9e9fdaf0-2446-4e80-85eb-cad22421274a"),
+                            Id = new Guid("4ec94492-8b67-490b-b268-d2d5a20ad81b"),
                             Name = "Русский язык",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("6f0c6730-01e8-4c86-a3f3-8eb3c3fa387b"),
+                            Id = new Guid("6539a209-f255-4f52-8c3a-16a100555856"),
                             Name = "Литература",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("c1bde77c-5006-443a-8670-70f6a790cd48"),
+                            Id = new Guid("8d7c2f7e-468a-42d0-a900-85bf0a137dbd"),
                             Name = "Всеобщая история",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("f1935661-0a32-4937-8a60-8c0bc0e3db9e"),
+                            Id = new Guid("f4492461-2c46-46ac-b0cd-dc6890b1bcb0"),
                             Name = "История России",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("877c06f2-7d3d-4534-9ee2-c28ec55cfb91"),
+                            Id = new Guid("f5e934c4-3186-4fe7-8fc1-1f1d2eb91377"),
                             Name = "Обществознание",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("64524068-80bf-45a7-b275-2ce043a164c9"),
+                            Id = new Guid("21c72d51-b3cc-41cb-84aa-f6a02b77fdf9"),
                             Name = "Черчение",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("08a08f9b-36a5-408b-8e49-e348c055e9ba"),
+                            Id = new Guid("c7c5e77f-1ff3-49ac-b113-0a20aaa0cac7"),
                             Name = "Основы безопасности и жизнедеятельности",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("b47fd7d1-b608-4e01-9e5b-455cabe2e6d8"),
+                            Id = new Guid("ba57e2c5-6084-4778-8816-73785830c4cc"),
                             Name = "Информатика",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("9203fe6a-c69c-4339-a9ec-52e73b7f59e8"),
+                            Id = new Guid("6c3a097a-4ec8-4e94-b84a-f296bdcc4061"),
                             Name = "География",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("0cfce4a5-accf-45bc-879d-94d6a2391840"),
+                            Id = new Guid("e472eeba-cee2-4de6-be57-eb6a2a75c6f6"),
                             Name = "Физическая культура",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("0c5e8ff9-b040-4b31-a41f-f1250cc31f0f"),
+                            Id = new Guid("42b47fb6-95fe-4ff9-8a28-9a026d4995f0"),
                             Name = "Биология",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("15a9ce92-07c4-412a-a17a-f8e3b10f1d3d"),
+                            Id = new Guid("d7ca591b-1edd-4e76-97ed-ae3cef1c4d5f"),
                             Name = "Физика",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("e071fe10-4755-47a6-ba6d-35e6546f8c5f"),
+                            Id = new Guid("0ae5053f-d330-4f9d-9f5f-064e5756fec9"),
                             Name = "Химия",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("8f5c09b8-6e7f-440d-8d9e-5c1b19fbf1b0"),
+                            Id = new Guid("57440685-d87b-4e97-9aff-a05c67ea2e24"),
                             Name = "Английский язык",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("ca49acbc-32df-4a1e-a7d6-ab8f01869170"),
+                            Id = new Guid("511fa85c-6eef-4509-b3b8-195533b1f9c6"),
                             Name = "Немецкий язык",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("ae7054c3-8c11-4631-8dc4-fa3b378d1967"),
+                            Id = new Guid("61bd2da4-43f6-4511-94b5-45f6f55c9a72"),
                             Name = "Французский язык",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("b828bffc-b9e9-4abd-a293-e9a77dbd854c"),
+                            Id = new Guid("c27411d2-e813-4500-bf29-f3e6349c5bc2"),
                             Name = "Испанский язык",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("12358437-bf13-42c1-84e9-db86c984b9ab"),
+                            Id = new Guid("91f058a2-8589-48bf-887b-598e4f5bf413"),
                             Name = "Китайский язык",
-                            ParentId = new Guid("6058a6c6-aff4-4b8d-9b81-9ad82274268c")
+                            ParentId = new Guid("381fb160-244f-41b4-829e-4cce9e0ecb34")
                         },
                         new
                         {
-                            Id = new Guid("2f8fcf78-24ed-4010-a0f7-4fc4ab17401e"),
+                            Id = new Guid("04999326-f2a5-4887-a5ce-c3da624bd86e"),
                             Name = "Абазинский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("51fb397e-2ecc-4820-9981-0eb8a449755a"),
+                            Id = new Guid("29a7f887-6ad9-41e9-ba2a-68b2316a1f76"),
                             Name = "Адыгейский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("06382053-7163-45d6-904a-8a28280198d6"),
+                            Id = new Guid("75aee469-8a00-4f8b-b8a1-6d5a6e00cdd2"),
                             Name = "Алтайский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("6d21fece-1ff7-419c-b53b-78edf2ecac1c"),
+                            Id = new Guid("9978f598-cd6b-489a-911f-67abf3a987c1"),
                             Name = "Башкирский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("0cfb9154-940a-4620-aa6f-5a3b2a75ab28"),
+                            Id = new Guid("4999b26d-3190-4795-a964-5ece1b3c9db5"),
                             Name = "Бурятский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("36247347-027e-4c81-9bd3-917346a11cb0"),
+                            Id = new Guid("a3c29d10-3647-402f-a937-45255ea5a7fe"),
                             Name = "Дагестанский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("e1d6a872-f16f-49dc-b585-26f00481882b"),
+                            Id = new Guid("5290f86e-77c8-463a-b769-ec3140288043"),
                             Name = "Ингушский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("0268e256-3077-489a-bbfb-d55ea42e67cf"),
+                            Id = new Guid("798c4af4-e750-40cd-806f-4328e3aa5b90"),
                             Name = "Кабардино-черкесский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("2927bcbf-9e68-47af-8b9f-0d70b7f6522d"),
+                            Id = new Guid("e0e8af28-3bcd-4448-b5f3-89536f3b5105"),
                             Name = "Калмыцкий язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("bdd18572-78a9-4ea5-8b4f-db1dc9325856"),
+                            Id = new Guid("bc65c1a1-1d97-444b-b286-d935d1e8545f"),
                             Name = "Карачаево-балкарский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("7f270633-104f-4d1b-9258-b56faf9d1aef"),
+                            Id = new Guid("a1a19881-d076-4ee3-bd55-371bda6be8ba"),
                             Name = "Коми язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("47346c91-8f18-4232-ba45-b2daa9b431cc"),
+                            Id = new Guid("83d3474a-8429-42e2-9600-a1bdc71cc24f"),
                             Name = "Крымскотатарский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("e5864f29-843b-4079-88ac-d93e7e430605"),
+                            Id = new Guid("870986a3-3492-483b-8fb1-f85902f390ff"),
                             Name = "Марийский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("0011ac2c-f294-4241-a1dd-266bcfa01e30"),
+                            Id = new Guid("b1301ded-97de-47ef-8b34-8259aed60463"),
                             Name = "Мокшанский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("5dfb23d0-ec1f-457c-aae6-34250a98808a"),
+                            Id = new Guid("6da8d0c1-bb4c-4935-8c7b-afefaddb3334"),
                             Name = "Ногайский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("24b5e9af-53db-4b2f-9555-920153bf79eb"),
+                            Id = new Guid("6f0c7af2-8281-45e9-8f2f-c6e4258fa307"),
                             Name = "Осетинский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("9f5be91f-de63-4a96-8091-0ce8c12d7bba"),
+                            Id = new Guid("3dec110c-8a59-41e6-886b-eb05531d483a"),
                             Name = "Татарский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("8aa95e30-fc81-4d8e-8b34-35a8a2d05c86"),
+                            Id = new Guid("0587f108-3c44-497b-9d11-bf2932b8f15b"),
                             Name = "Тувинский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("40cc4c11-daae-49c3-a75f-9b180a7c2550"),
+                            Id = new Guid("36f7f170-bae5-46b5-98a6-3e7334d3fc9f"),
                             Name = "Удмуртский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("29897a68-5ec2-4326-b963-98da00bb36c8"),
+                            Id = new Guid("db611e48-d033-4015-905b-b6242394e293"),
                             Name = "Хакасский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("82f861cd-692c-4331-ba32-4a9aebfedf90"),
+                            Id = new Guid("18b9c17e-5eb5-42d2-a2c7-23364ddc748e"),
                             Name = "Чеченский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("d12c235b-adb5-4abd-af2c-16c084fba0c1"),
+                            Id = new Guid("810a6d1b-0e5d-418e-a872-cd2b500b5633"),
                             Name = "Чувашский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("86becb03-9bb4-4f8d-ae12-1db6a3b95eae"),
+                            Id = new Guid("51b2224c-0d3b-4be0-974c-5070796cc967"),
                             Name = "Эрзянский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         },
                         new
                         {
-                            Id = new Guid("ee1183c6-8afd-4b96-ae84-e268e74e0934"),
+                            Id = new Guid("f1bbcedf-60ff-4482-bf53-f50ad1dedd85"),
                             Name = "Якутский язык",
-                            ParentId = new Guid("aab5597d-9a56-4be9-b4ae-31b343c3ab66")
+                            ParentId = new Guid("200214e0-5ddb-471d-9eb7-941d7b549b34")
                         });
+                });
+
+            modelBuilder.Entity("AspDigitalLesson.Model.Entity.Violators", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DateBan")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateCreatedViolator")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsCancel")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StudentsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentsId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("Violators");
                 });
 
             modelBuilder.Entity("AspDigitalLesson.Model.Entity.AboutTeacher", b =>
@@ -1319,8 +1402,8 @@ namespace ApiDigitalLesson.Migration.Migrations
             modelBuilder.Entity("AspDigitalLesson.Model.Entity.TeacherTypeLesson", b =>
                 {
                     b.HasOne("AspDigitalLesson.Model.Entity.Teacher", "Teacher")
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
+                        .WithOne()
+                        .HasForeignKey("AspDigitalLesson.Model.Entity.TeacherTypeLesson", "TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1342,6 +1425,23 @@ namespace ApiDigitalLesson.Migration.Migrations
                         .HasForeignKey("ParentId");
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("AspDigitalLesson.Model.Entity.Violators", b =>
+                {
+                    b.HasOne("AspDigitalLesson.Model.Entity.Students", "Students")
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AspDigitalLesson.Model.Entity.Teacher", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId");
+
+                    b.Navigation("Students");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("AspDigitalLesson.Model.Entity.TypeLessons", b =>

@@ -27,6 +27,8 @@ namespace ApiDigitalLesson.Migration.Context
         public DbSet<Scheduler> Schedulers { get; set; }
         public DbSet<SettingsStudent> SettingsStudent { get; set; }
         public DbSet<SettingsTeacher> SettingsTeacher { get; set; }
+        public DbSet<Moderator> Moderators { get; set; }
+        public DbSet<Violators> Violators { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
