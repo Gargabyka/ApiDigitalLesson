@@ -9,9 +9,9 @@ using ApiDigitalLesson.Common.Services;
 using ApiDigitalLesson.Common.Services.Interface.SMTP;
 using ApiDigitalLesson.Identity.Models.Dto;
 using ApiDigitalLesson.Identity.Models.Entity;
-using ApiDigitalLesson.Identity.Models.Enums;
 using ApiDigitalLesson.Identity.Models.Request;
 using ApiDigitalLesson.Identity.Services.Interface;
+using ApiDigitalLesson.Model.Request;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -97,7 +97,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 var response = new AuthenticationResponse()
                 {
                     Id = user.Id,
-                    JWToken = new JwtSecurityTokenHandler().WriteToken(jwToken),
+                    JwToken = new JwtSecurityTokenHandler().WriteToken(jwToken),
                     Email = user.Email,
                     UserName = user.UserName,
                     Roles = role,
@@ -108,7 +108,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось провести авторизацию пользователя, {e.InnerException}";
+                var message = $"Не удалось провести авторизацию пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -147,7 +147,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось зарегистрировать пользователя, {e.InnerException}";
+                var message = $"Не удалось зарегистрировать пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -172,7 +172,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось подтвердить email пользователя, {e.InnerException}";
+                var message = $"Не удалось подтвердить email пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -185,13 +185,15 @@ namespace ApiDigitalLesson.Identity.Services.Impl
         {
             try
             {
-                const string route = "api/Identity/reset-password/";
+                const string route = "api/Identity/ResetPassword/";
                 var user = await _userManager.FindByEmailAsync(request.Email);
                 if (user == null) return;
 
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var enpointUri = new Uri(string.Concat($"{uri}/", route));
-                var resetPasswordUri = QueryHelpers.AddQueryString(enpointUri.ToString(), "userId", user.Id);
+                var endpointUri = new Uri(string.Concat($"{uri}/", route));
+                var resetPasswordUri = QueryHelpers.AddQueryString(endpointUri.ToString(), "userId", user.Id);
+                resetPasswordUri = QueryHelpers.AddQueryString(resetPasswordUri, "code", code);
+
                 var emailRequest = new EmailRequest()
                 {
                     Body = $"Для сброса пароля перейдите по ссылке:",
@@ -204,7 +206,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось сбросить пароль пользователя, {e.InnerException}";
+                var message = $"Не удалось сбросить пароль пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -231,7 +233,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось восстановить пароль пользователя, {e.InnerException}";
+                var message = $"Не удалось восстановить пароль пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -266,7 +268,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
                 var response = new AuthenticationResponse()
                 {
                     Id = user.Id,
-                    JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                    JwToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                     Email = user.Email,
                     UserName = user.UserName,
                     IsVerified = user.EmailConfirmed,
@@ -282,7 +284,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось обновить токен пользователя, {e.InnerException}";
+                var message = $"Не удалось обновить токен пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -308,7 +310,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось выйти из системы, {e.InnerException}";
+                var message = $"Не удалось выйти из системы, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -346,7 +348,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить список пользователей, {e.InnerException}";
+                var message = $"Не удалось получить список пользователей, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -391,7 +393,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Произошла ошибка при генерации токена, {e.InnerException}";
+                var message = $"Произошла ошибка при генерации токена, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -415,7 +417,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Произошла ошибка при обновлении токена, {e.InnerException}";
+                var message = $"Произошла ошибка при обновлении токена, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -428,7 +430,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
         {
             try
             {
-                const string route = "api/Identity/confirm-email/";
+                const string route = "api/Identity/ConfirmEmail/";
             
                 var verificationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 verificationCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(verificationCode));
@@ -451,7 +453,7 @@ namespace ApiDigitalLesson.Identity.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Произошла ошибка при отправки письма, {e.InnerException}";
+                var message = $"Произошла ошибка при отправки письма, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }

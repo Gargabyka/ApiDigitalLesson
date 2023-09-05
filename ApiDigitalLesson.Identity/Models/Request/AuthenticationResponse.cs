@@ -33,7 +33,7 @@
         /// <summary>
         /// JWT токен 
         /// </summary>
-        public string JWToken { get; set; }
+        public string JwToken { get; set; }
 
         /// <summary>
         /// Обновленный токен

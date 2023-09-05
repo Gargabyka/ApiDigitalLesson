@@ -2,13 +2,15 @@
 using ApiDigitalLesson.Common.CustomException;
 using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
-using AspDigitalLesson.Model.Enums;
-using Microsoft.AspNetCore.Mvc;
+using ApiDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.Notification;
+using ApiDigitalLesson.Model.Dto.Scheduler;
+using ApiDigitalLesson.Model.Dto.SingleLesson;
+using ApiDigitalLesson.Model.Entity;
+using ApiDigitalLesson.Model.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Roles = AspDigitalLesson.Model.Const.Roles;
+using Roles = ApiDigitalLesson.Model.Const.Roles;
 
 namespace ApiDigitalLesson.BL.Services.Impl
 {
@@ -28,6 +30,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly IUserIdentityService _identityService;
         private readonly INotificationService _notificationService;
         private readonly ISchedulerService _schedulerService;
+        private readonly IViolatorsService _violatorsService;
 
         public SingleLessonService(
             IGenericRepository<Students> studentsRepository,
@@ -40,7 +43,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
             INotificationService notificationService, 
             ISchedulerService schedulerService, 
             IGenericRepository<SettingsTeacher> settingsTeacherGenericRepository, 
-            IGenericRepository<SettingsStudent> settingsStudentGenericRepository)
+            IGenericRepository<SettingsStudent> settingsStudentGenericRepository, 
+            IViolatorsService violatorsService)
         {
             _studentsRepository = studentsRepository;
             _teacherTypeLessonsRepository = teacherTypeLessonsRepository;
@@ -53,7 +57,14 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _schedulerService = schedulerService;
             _settingsTeacherGenericRepository = settingsTeacherGenericRepository;
             _settingsStudentGenericRepository = settingsStudentGenericRepository;
+            _violatorsService = violatorsService;
         }
+        
+        /// <summary>
+        /// Проверка пользователя на бан
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> IsBanned() => await _violatorsService.IsBannedCurrentUserAsync();
 
         /// <summary>
         /// Получить индивидуальный урок по id
@@ -104,7 +115,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить индивидуальный урок по id: {id}, {e.InnerException}";
+                var message = $"Не удалось получить индивидуальный урок по id: {id}, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -163,7 +174,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить индивидуальные уроки преподавателя, {e.InnerException}";
+                var message = $"Не удалось получить индивидуальные уроки преподавателя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -176,6 +187,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                if (await IsBanned())
+                {
+                    throw new Exception("Пользователь заблокирован");
+                }
+                
                 var teacherTypeLesson = await _teacherTypeLessonsRepository.GetAsync(Guid.Parse(data.TeacherTypeLessonId));
                 
                 var teacher = await _teacherRepository.GetAsync(teacherTypeLesson.TeacherId);
@@ -187,31 +203,23 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 var currentUser = await _identityService.GetCurrentUserAsync();
                 var currentRole = await _identityService.GetRoleCurrentUserAsync();
 
-                if (currentRole == Roles.Teacher && teacher.UserId.ToString() != currentUser.Id)
+                switch (currentRole)
                 {
-                    throw new Exception("Нельзя обновлять не своего пользователя");
-                }
-                
-                if (currentRole == Roles.Student && student.UserId.ToString() != currentUser.Id)
-                {
-                    throw new Exception("Нельзя обновлять не своего пользователя");
+                    case Roles.Teacher when teacher.UserId.ToString() != currentUser.Id:
+                        throw new Exception("Нельзя обновлять не своего пользователя");
+                    case Roles.Student when student.UserId.ToString() != currentUser.Id:
+                        throw new Exception("Нельзя обновлять не своего пользователя");
+                    case Roles.Student when !teacherSettings.IsAllowCreateLesson:
+                        throw new Exception("Преподаватель запретил создавать в своем календаре уроки");
+                    case Roles.Teacher when !studentSettings.IsAllowCreateLesson:
+                        throw new Exception("Студент запретил создавать в своем календаре уроки");
                 }
 
-                if (currentRole == Roles.Student && !teacherSettings.IsAllowCreateLesson)
-                {
-                    throw new Exception("Преподаватель запретил создавать в своем календаре уроки");
-                }
-                
-                if (currentRole == Roles.Teacher && !studentSettings.IsAllowCreateLesson)
-                {
-                    throw new Exception("Студент запретил создавать в своем календаре уроки");
-                }
-                
                 var timeCancel = data.DateStart.AddHours(-teacherSettings.TimeCreateLesson);
 
                 if (DateTime.UtcNow > timeCancel)
                 {
-                    throw new Exception("Нельзя отменить занятие позже заложенного преподавателем времени");
+                    throw new Exception("Нельзя создать занятие позже заложенного преподавателем времени");
                 }
                 
                 var intersectionDates = new IntersectionDatesDto
@@ -228,7 +236,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     throw new Exception("Найдено пересечение дат");
                 }
 
-                var singleLesson = new SingleLesson()
+                var singleLesson = new SingleLesson
                 {
                     Id = Guid.NewGuid(),
                     StudentsId = student.Id,
@@ -241,7 +249,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
                 var singleLessonId = await _singleLessonRepository.AddAsync(singleLesson);
 
-                var scheduler = new Scheduler()
+                var scheduler = new Scheduler
                 {
                     Id = Guid.NewGuid(),
                     TeacherId = teacher.Id,
@@ -257,13 +265,13 @@ namespace ApiDigitalLesson.BL.Services.Impl
             {
                 await DeleteEmptySingleLessonWithError(data);
                 var message =
-                    $"Не удалось создать индивидуальный урок преподавателя, произошла ошибка при добавлении записи {e.InnerException}";
+                    $"Не удалось создать индивидуальный урок преподавателя, произошла ошибка при добавлении записи {e.Message}";
                 _logger.LogError(message);
-                throw new Exception(message);
+                throw new AddException(message);
             }
             catch (Exception e)
             {
-                var message = $"Не удалось создать индивидуальный урок преподавателя, {e.InnerException}";
+                var message = $"Не удалось создать индивидуальный урок преподавателя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -323,7 +331,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить список неподтвержденных уроков, {e.InnerException}";
+                var message = $"Не удалось получить список неподтвержденных уроков, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -336,6 +344,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                if (await IsBanned())
+                {
+                    throw new Exception("Пользователь заблокирован");
+                }
+                
                 var lesson = await _singleLessonRepository.GetAsync(Guid.Parse(id));
                 var teacherTypeLesson = await _teacherTypeLessonsRepository.GetAsync(lesson.TeacherTypeLessonId);
                 var teacher = await _teacherRepository.GetAsync(teacherTypeLesson.TeacherId);
@@ -345,24 +358,16 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
                 var currentRole = await _identityService.GetRoleCurrentUserAsync();
                 
-                if (currentRole == Roles.Teacher && teacher.UserId.ToString() != currentUser.Id)
+                switch (currentRole)
                 {
-                    throw new Exception("Нельзя подтвердить не свой урок");
-                }
-                
-                if (currentRole == Roles.Student && student.UserId.ToString() != currentUser.Id)
-                {
-                    throw new Exception("Нельзя подтвердить не свой урок");
-                }
-
-                if (currentRole == Roles.Student && lesson.IsConfirmedForStudent)
-                {
-                    throw new Exception("Вы уже подтвердили урок");
-                }
-
-                if (currentRole == Roles.Teacher && lesson.IsConfirmedForTeacher)
-                {
-                    throw new Exception("Вы уже подтвердили урок");
+                    case Roles.Teacher when teacher.UserId.ToString() != currentUser.Id:
+                        throw new Exception("Нельзя подтвердить не свой урок");
+                    case Roles.Student when student.UserId.ToString() != currentUser.Id:
+                        throw new Exception("Нельзя подтвердить не свой урок");
+                    case Roles.Student when lesson.IsConfirmedForStudent:
+                        throw new Exception("Вы уже подтвердили урок");
+                    case Roles.Teacher when lesson.IsConfirmedForTeacher:
+                        throw new Exception("Вы уже подтвердили урок");
                 }
 
                 var scheduler = await _schedulerGenericRepository.GetAll()
@@ -393,7 +398,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
                 await _singleLessonRepository.UpdateAsync(lesson);
                 
-                var notification = new NotificationLessonDto()
+                var notification = new NotificationLessonDto
                 {
                     Id = lesson.Id.ToString(),
                     UserId = currentUser.Id,
@@ -405,7 +410,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось подтвердить индивидуальный урок, {e.InnerException}";
+                var message = $"Не удалось подтвердить индивидуальный урок, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -418,6 +423,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                if (await IsBanned())
+                {
+                    throw new Exception("Пользователь заблокирован");
+                }
+                
                 var lesson = await _singleLessonRepository.GetAsync(Guid.Parse(id));
 
                 if (lesson.IsCancel)
@@ -447,7 +457,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось отменить индивидуальный урок, {e.InnerException}";
+                var message = $"Не удалось отменить индивидуальный урок, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -500,7 +510,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
             await _singleLessonRepository.UpdateAsync(lesson);
 
-            var notification = new NotificationLessonDto()
+            var notification = new NotificationLessonDto
             {
                 Id = lesson.Id.ToString(),
                 UserId = teacher.UserId.ToString(),
@@ -516,6 +526,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// </summary>
         private async Task CancelSingleLessonTeacherAsync(string description, SingleLesson lesson)
         {
+            if (await IsBanned())
+            {
+                throw new Exception("Пользователь заблокирован");
+            }
+            
             var currentUser = await _identityService.GetCurrentUserAsync();
 
             var teachers = _teacherRepository.GetAll();
@@ -540,7 +555,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             await _singleLessonRepository.UpdateAsync(lesson);
             
 
-            var notification = new NotificationLessonDto()
+            var notification = new NotificationLessonDto
             {
                 Id = lesson.Id.ToString(),
                 UserId = student.UserId.ToString(),
@@ -585,7 +600,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Произошла ошибка при попытки удалить пустые уроки, {e.InnerException}";
+                var message = $"Произошла ошибка при попытки удалить пустые уроки, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }

@@ -2,7 +2,7 @@
 using ApiDigitalLesson.Common.Services.Impl.Telegram;
 using ApiDigitalLesson.Common.Services.Interface.SMTP;
 using ApiDigitalLesson.Common.Services.Interface.Telegram;
-using ApiDigitalLesson.Identity.Models.Request;
+using ApiDigitalLesson.Model.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bots;

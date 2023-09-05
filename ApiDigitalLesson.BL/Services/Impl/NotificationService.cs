@@ -1,14 +1,14 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using ApiDigitalLesson.Common.Services.Impl.Telegram;
 using ApiDigitalLesson.Common.Services.Interface.SMTP;
-using ApiDigitalLesson.Identity.Models.Request;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
-using AspDigitalLesson.Model.Enums;
-using Microsoft.AspNetCore.Mvc;
+using ApiDigitalLesson.Common.Services.Interface.Telegram;
+using ApiDigitalLesson.Model.Dto.Notification;
+using ApiDigitalLesson.Model.Dto.Settings;
+using ApiDigitalLesson.Model.Entity;
+using ApiDigitalLesson.Model.Enums;
+using ApiDigitalLesson.Model.Request;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Roles = AspDigitalLesson.Model.Const.Roles;
+using Roles = ApiDigitalLesson.Model.Const.Roles;
 
 namespace ApiDigitalLesson.BL.Services.Impl
 {
@@ -22,8 +22,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly IGenericRepository<Scheduler> _schedulerGenericRepository;
         private readonly IGenericRepository<SingleLesson> _singleLessonGenericRepository;
         private readonly IGenericRepository<GroupLesson> _groupLessonGenericRepository;
-        private readonly IGenericRepository<SettingsTeacher> _settingsTeacherGenericRepository;
-        private readonly IGenericRepository<SettingsStudent> _settingsStudentGenericRepository;
         private readonly IGenericRepository<TypeLessons> _typeLessonsGenericRepository;
         private readonly IGenericRepository<TeacherTypeLesson> _teacherTypeLessonsRepository;
         private readonly IUserIdentityService _identityService;
@@ -41,8 +39,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
             ITelegramService telegramService, 
             ILogger<NotificationService> logger, 
             IUserIdentityService identityService, 
-            IGenericRepository<SettingsTeacher> settingsTeacherGenericRepository, 
-            IGenericRepository<SettingsStudent> settingsStudentGenericRepository, 
             IGenericRepository<TypeLessons> typeLessonsGenericRepository, 
             IGenericRepository<TeacherTypeLesson> teacherTypeLessonsRepository)
         {
@@ -55,8 +51,6 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _telegramService = telegramService;
             _logger = logger;
             _identityService = identityService;
-            _settingsTeacherGenericRepository = settingsTeacherGenericRepository;
-            _settingsStudentGenericRepository = settingsStudentGenericRepository;
             _typeLessonsGenericRepository = typeLessonsGenericRepository;
             _teacherTypeLessonsRepository = teacherTypeLessonsRepository;
         }
@@ -78,35 +72,33 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 {
                     case Roles.Student:
                         var student = await students
+                            .Include(x=>x.SettingsStudent)
                             .SingleOrDefaultAsync(x=>x.UserId.ToString() == user.Id);
-
+                        
                         if (student == null)
                         {
                             throw new Exception("Не удалось найти студента");
                         }
 
-                        var selectStudent = new SelectNotificationDto()
+                        var selectStudent = new SelectNotificationDto
                         {
                             Email = student.Email,
                             TelegramId = student.TelegramId
                         };
 
-                        var studentsSettings =
-                            await _settingsStudentGenericRepository.GetAsync(student.SettingsStudentId);
-                        
-                        var settingsStudent = new SettingsDto()
+                        var settingsStudent = new SettingsDto
                         {
-                            IsNotificationTelegram = studentsSettings.IsNotificationTelegram,
-                            IsRequestForLessonTelegram = studentsSettings.IsRequestForLessonTelegram,
-                            IsAcceptForLessonTelegram = studentsSettings.IsAcceptForLessonTelegram,
-                            IsCancelLessonTelegram = studentsSettings.IsCancelLessonTelegram,
-                            IsLessonComingSoonTelegram = studentsSettings.IsLessonComingSoonTelegram,
-                            TimeBeforeLesson = studentsSettings.TimeBeforeLesson,
-                            IsNotificationEmail = studentsSettings.IsNotificationEmail,
-                            IsRequestForLessonEmail = studentsSettings.IsRequestForLessonEmail,
-                            IsAcceptForLessonEmail = studentsSettings.IsAcceptForLessonEmail,
-                            IsCancelLessonEmail = studentsSettings.IsCancelLessonEmail,
-                            IsLessonComingSoonEmail = studentsSettings.IsLessonComingSoonEmail,
+                            IsNotificationTelegram = student.SettingsStudent.IsNotificationTelegram,
+                            IsRequestForLessonTelegram = student.SettingsStudent.IsRequestForLessonTelegram,
+                            IsAcceptForLessonTelegram = student.SettingsStudent.IsAcceptForLessonTelegram,
+                            IsCancelLessonTelegram = student.SettingsStudent.IsCancelLessonTelegram,
+                            IsLessonComingSoonTelegram = student.SettingsStudent.IsLessonComingSoonTelegram,
+                            TimeBeforeLesson = student.SettingsStudent.TimeBeforeLesson,
+                            IsNotificationEmail = student.SettingsStudent.IsNotificationEmail,
+                            IsRequestForLessonEmail = student.SettingsStudent.IsRequestForLessonEmail,
+                            IsAcceptForLessonEmail = student.SettingsStudent.IsAcceptForLessonEmail,
+                            IsCancelLessonEmail = student.SettingsStudent.IsCancelLessonEmail,
+                            IsLessonComingSoonEmail = student.SettingsStudent.IsLessonComingSoonEmail
                         };
                         
                         await SelectSendNotification(notificationLesson, settingsStudent, selectStudent, role);
@@ -114,6 +106,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     case Roles.Teacher:
 
                         var teacher = await teachers
+                            .Include(x=>x.SettingsTeacher)
                             .SingleOrDefaultAsync(x => x.UserId.ToString() == user.Id);
 
                         if (teacher == null)
@@ -121,28 +114,25 @@ namespace ApiDigitalLesson.BL.Services.Impl
                             throw new Exception("Не удалось найти преподавателя");
                         }
 
-                        var selectTeacher = new SelectNotificationDto()
+                        var selectTeacher = new SelectNotificationDto
                         {
                             Email = teacher.Email,
                             TelegramId = teacher.TelegramId
                         };
-                        
-                        var teacherSettings =
-                            await _settingsTeacherGenericRepository.GetAsync(teacher.SettingsTeacherId);
-                        
-                        var settingsTeacher = new SettingsDto()
+
+                        var settingsTeacher = new SettingsDto
                         {
-                            IsNotificationTelegram = teacherSettings.IsNotificationTelegram,
-                            IsRequestForLessonTelegram = teacherSettings.IsRequestForLessonTelegram,
-                            IsAcceptForLessonTelegram = teacherSettings.IsAcceptForLessonTelegram,
-                            IsCancelLessonTelegram = teacherSettings.IsCancelLessonTelegram,
-                            IsLessonComingSoonTelegram = teacherSettings.IsLessonComingSoonTelegram,
-                            TimeBeforeLesson = teacherSettings.TimeBeforeLesson,
-                            IsNotificationEmail = teacherSettings.IsNotificationEmail,
-                            IsRequestForLessonEmail = teacherSettings.IsRequestForLessonEmail,
-                            IsAcceptForLessonEmail = teacherSettings.IsAcceptForLessonEmail,
-                            IsCancelLessonEmail = teacherSettings.IsCancelLessonEmail,
-                            IsLessonComingSoonEmail = teacherSettings.IsLessonComingSoonEmail,
+                            IsNotificationTelegram = teacher.SettingsTeacher.IsNotificationTelegram,
+                            IsRequestForLessonTelegram = teacher.SettingsTeacher.IsRequestForLessonTelegram,
+                            IsAcceptForLessonTelegram = teacher.SettingsTeacher.IsAcceptForLessonTelegram,
+                            IsCancelLessonTelegram = teacher.SettingsTeacher.IsCancelLessonTelegram,
+                            IsLessonComingSoonTelegram = teacher.SettingsTeacher.IsLessonComingSoonTelegram,
+                            TimeBeforeLesson = teacher.SettingsTeacher.TimeBeforeLesson,
+                            IsNotificationEmail = teacher.SettingsTeacher.IsNotificationEmail,
+                            IsRequestForLessonEmail = teacher.SettingsTeacher.IsRequestForLessonEmail,
+                            IsAcceptForLessonEmail = teacher.SettingsTeacher.IsAcceptForLessonEmail,
+                            IsCancelLessonEmail = teacher.SettingsTeacher.IsCancelLessonEmail,
+                            IsLessonComingSoonEmail = teacher.SettingsTeacher.IsLessonComingSoonEmail
                         };
                         
                         await SelectSendNotification(notificationLesson, settingsTeacher, selectTeacher, role);
@@ -153,7 +143,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Произошла ошибка при отправке уведомления, {e.InnerException}";
+                var message = $"Произошла ошибка при отправке уведомления, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -265,7 +255,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             var lessonInformation = await GetLessonInformation(notificationLessonDto);
             string message;
 
-            var request = new EmailRequest()
+            var request = new EmailRequest
             {
                 ToName = role == Roles.Teacher
                     ? lessonInformation.StudentName
@@ -356,15 +346,12 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private async Task<NotificationLessonInformationDto> GetLessonInformation(
             NotificationLessonDto notificationLessonDto)
         {
-            switch (notificationLessonDto.LessonEnum)
+            return notificationLessonDto.LessonEnum switch
             {
-                case LessonEnum.Single:
-                    return await GetSingleLessonInformation(notificationLessonDto);
-                case LessonEnum.Group:
-                    return await GetGroupLessonInformation(notificationLessonDto);
-                default:
-                    throw new Exception("Не удалось найти тип урока");
-            }
+                LessonEnum.Single => await GetSingleLessonInformation(notificationLessonDto),
+                LessonEnum.Group => await GetGroupLessonInformation(notificationLessonDto),
+                _ => throw new Exception("Не удалось найти тип урока")
+            };
         }
 
         /// <summary>

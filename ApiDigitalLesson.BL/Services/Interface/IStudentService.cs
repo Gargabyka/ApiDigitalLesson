@@ -1,8 +1,10 @@
-﻿#nullable enable
-using ApiDigitalLesson.BL.Services.Impl;
+﻿using ApiDigitalLesson.BL.Services.Impl;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
-using Microsoft.AspNetCore.Mvc;
+using ApiDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.Scheduler;
+using ApiDigitalLesson.Model.Dto.Settings;
+using ApiDigitalLesson.Model.Dto.Student;
+using ApiDigitalLesson.Model.Dto.Teacher;
 
 namespace ApiDigitalLesson.BL.Services.Interface
 {
@@ -14,7 +16,12 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Получить студента пользователя
         /// </summary>
-        Task<BaseResponse<StudentsDto>> GetStudentUserAsync(string? userId);
+        Task<BaseResponse<StudentsDto>> GetStudentUserAsync();
+
+        /// <summary>
+        /// Получить настройки студента
+        /// </summary>
+        Task<BaseResponse<SettingsStudentDto>> GetStudentSettingsAsync();
         
         /// <summary>
         /// Получение конкретного студента
@@ -29,12 +36,12 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Обновить студента
         /// </summary>
-        Task UpdateStudentsAsync(StudentsDto students);
+        Task UpdateStudentsAsync(UpdateStudentsDto students);
 
         /// <summary>
         /// Получить всех преподавателей студента
         /// </summary>
-        Task<BaseResponse<List<TeacherDto>>> GetListTeacherForStudentAsync(string id);
+        Task<BaseResponse<List<TeacherDto>>> GetListTeacherForStudentAsync();
 
         /// <summary>
         /// Получить расписание студента
@@ -44,6 +51,6 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Обновить настройки студента
         /// </summary>
-        Task UpdateStudentSettingsAsync(StudentSettingsDto settingsDto, string studentId);
+        Task UpdateStudentSettingsAsync(SettingsStudentDto dto, string studentId);
     }
 }

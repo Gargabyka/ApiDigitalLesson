@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Security.Claims;
-using ApiDigitalLesson.Common.Extension;
+﻿using System.Security.Claims;
 using ApiDigitalLesson.Identity.Models.Dto;
 using ApiDigitalLesson.Identity.Models.Entity;
 using Microsoft.AspNetCore.Authentication;

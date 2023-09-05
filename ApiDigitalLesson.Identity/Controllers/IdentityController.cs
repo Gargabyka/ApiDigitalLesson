@@ -24,7 +24,7 @@ namespace ApiDigitalLesson.Identity.Controllers
             _logger = logger;
         }
 
-        [HttpPost("authenticate")]
+        [HttpPost("Authenticate")]
         public async Task<IActionResult> AuthenticateAsync(AuthenticationRequest request)
         {
             try
@@ -36,14 +36,15 @@ namespace ApiDigitalLesson.Identity.Controllers
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода AuthenticateAsync";
+                    $"Контроллер: {nameof(IdentityController)}. " +
+                    $"Произошла ошибка при работе метода AuthenticateAsync. {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
             }
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> RegisterAsync(RegisterRequest request)
         {
             try
@@ -55,14 +56,15 @@ namespace ApiDigitalLesson.Identity.Controllers
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода RegisterAsync";
+                    $"Контроллер: {nameof(IdentityController)}. " +
+                    $"Произошла ошибка при работе метода RegisterAsync. {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
             }
         }
 
-        [HttpGet("confirm-email")]
+        [HttpGet("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmailAsync([FromQuery] string userId, [FromQuery] string code)
         {
             try
@@ -72,14 +74,15 @@ namespace ApiDigitalLesson.Identity.Controllers
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода ConfirmEmailAsync";
+                    $"Контроллер: {nameof(IdentityController)}. " +
+                    $"Произошла ошибка при работе метода ConfirmEmailAsync. {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
             }
         }
 
-        [HttpPost("forgot-password")]
+        [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordRequest request)
         {
             try
@@ -91,14 +94,15 @@ namespace ApiDigitalLesson.Identity.Controllers
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода ForgotPasswordAsync";
+                    $"Контроллер: {nameof(IdentityController)}. " +
+                    $"Произошла ошибка при работе метода ForgotPasswordAsync. {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
             }
         }
 
-        [HttpPost("reset-password")]
+        [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPasswordAsync([FromQuery] string userId, ResetPasswordRequest request)
         {
             try
@@ -108,14 +112,15 @@ namespace ApiDigitalLesson.Identity.Controllers
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода ResetPasswordAsync";
+                    $"Контроллер: {nameof(IdentityController)}. " +
+                    $"Произошла ошибка при работе метода ResetPasswordAsync. {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
             }
         }
 
-        [HttpPost("refreshtoken")]
+        [HttpPost("RefreshToken")]
         public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequest request)
         {
             try
@@ -125,7 +130,8 @@ namespace ApiDigitalLesson.Identity.Controllers
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода RefreshTokenAsync";
+                    $"Контроллер: {nameof(IdentityController)}. " +
+                    $"Произошла ошибка при работе метода RefreshTokenAsync. {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -133,7 +139,7 @@ namespace ApiDigitalLesson.Identity.Controllers
         }
 
         [Authorize]
-        [HttpGet("logout")]
+        [HttpGet("Logout")]
         public async Task<IActionResult> LogoutAsync(string emailOrName)
         {
             try
@@ -143,7 +149,8 @@ namespace ApiDigitalLesson.Identity.Controllers
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода LogoutAsync";
+                    $"Контроллер: {nameof(IdentityController)}. " +
+                    $"Произошла ошибка при работе метода LogoutAsync. {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -151,7 +158,7 @@ namespace ApiDigitalLesson.Identity.Controllers
         }
 
         [Authorize]
-        [HttpGet("getuserlist")]
+        [HttpGet("GetUsers")]
         public async Task<IActionResult> GetUsersAsync()
         {
             try
@@ -162,7 +169,8 @@ namespace ApiDigitalLesson.Identity.Controllers
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(IdentityController)}. Произошла ошибка при работе метода GetUsersAsync";
+                    $"Контроллер: {nameof(IdentityController)}. " +
+                    $"Произошла ошибка при работе метода GetUsersAsync. {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);

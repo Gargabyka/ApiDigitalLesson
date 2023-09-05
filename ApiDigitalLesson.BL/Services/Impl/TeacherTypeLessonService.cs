@@ -1,9 +1,9 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
 using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
-using Microsoft.AspNetCore.Mvc;
+using ApiDigitalLesson.Model.Dto.TeacherTypeLesson;
+using ApiDigitalLesson.Model.Dto.TypeLesson;
+using ApiDigitalLesson.Model.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -19,20 +19,29 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly IGenericRepository<TypeLessons> _typeLessonsGenericRepository;
         private readonly IUserIdentityService _identityService;
         private readonly ILogger<TeacherTypeLessonService> _logger;
+        private readonly IViolatorsService _violatorsService;
 
         public TeacherTypeLessonService(
             IGenericRepository<TeacherTypeLesson> teacherTypeLessonGenericRepository, 
             IGenericRepository<Teacher> teacherGenericRepository,
             IGenericRepository<TypeLessons> typeLessonsGenericRepository, 
             IUserIdentityService identityService, 
-            ILogger<TeacherTypeLessonService> logger)
+            ILogger<TeacherTypeLessonService> logger, 
+            IViolatorsService violatorsService)
         {
             _teacherTypeLessonGenericRepository = teacherTypeLessonGenericRepository;
             _teacherGenericRepository = teacherGenericRepository;
             _typeLessonsGenericRepository = typeLessonsGenericRepository;
             _identityService = identityService;
             _logger = logger;
+            _violatorsService = violatorsService;
         }
+        
+        /// <summary>
+        /// Проверка пользователя на бан
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> IsBanned() => await _violatorsService.IsBannedCurrentUserAsync();
 
         /// <summary>
         /// Получить тип урока преподавателя
@@ -67,7 +76,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить тип урока преподавателя по id: {id}, {e.InnerException}";
+                var message = $"Не удалось получить тип урока преподавателя по id: {id}, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -107,7 +116,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить типы уроков преподавателя, {e.InnerException}";
+                var message = $"Не удалось получить типы уроков преподавателя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -120,19 +129,22 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                if (await IsBanned())
+                {
+                    throw new Exception("Пользователь заблокирован");
+                }
+                
                 var teacher = await _teacherGenericRepository.GetAsync(Guid.Parse(typeLessonDto.TeacherId));
                 var currentUser = await _identityService.GetCurrentUserAsync();
 
-                if (typeLessonDto is {IsOnline: not null, IsOffline: not null} &&
-                    !typeLessonDto.IsOffline.Value && !typeLessonDto.IsOnline.Value)
+                switch (typeLessonDto)
                 {
-                    throw new Exception("Надо выбрать минимум один тип проведения урока");
-                }
-
-                if (typeLessonDto is {IsSingle: not null, IsGroup: not null} &&
-                    !typeLessonDto.IsSingle.Value && !typeLessonDto.IsGroup.Value)
-                {
-                    throw new Exception("Надо выбрать минимум один тип проведения урока");
+                    case {IsOnline: not null, IsOffline: not null} when
+                        !typeLessonDto.IsOffline.Value && !typeLessonDto.IsOnline.Value:
+                        throw new Exception("Надо выбрать минимум один тип проведения урока");
+                    case {IsSingle: not null, IsGroup: not null} when
+                        !typeLessonDto.IsSingle.Value && !typeLessonDto.IsGroup.Value:
+                        throw new Exception("Надо выбрать минимум один тип проведения урока");
                 }
 
                 if (teacher.UserId.ToString() != currentUser.Id)
@@ -164,7 +176,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось создать типы уроков преподавателя, {e.InnerException}";
+                var message = $"Не удалось создать типы уроков преподавателя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -177,6 +189,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                if (await IsBanned())
+                {
+                    throw new Exception("Пользователь заблокирован");
+                }
+                
                 var teacher = await _teacherGenericRepository.GetAsync(Guid.Parse(typeLessonDto.TeacherId));
                 var currentUser = await _identityService.GetCurrentUserAsync();
 
@@ -198,7 +215,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось обновить типы уроков преподавателя, {e.InnerException}";
+                var message = $"Не удалось обновить типы уроков преподавателя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -211,6 +228,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                if (await IsBanned())
+                {
+                    throw new Exception("Пользователь заблокирован");
+                }
+                
                 var teacherTypeLesson = await _teacherTypeLessonGenericRepository.GetAsync(Guid.Parse(id));
                 var teacher = await _teacherGenericRepository.GetAsync(teacherTypeLesson.TeacherId);
                 
@@ -225,7 +247,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось удалять типы уроков преподавателя, {e.InnerException}";
+                var message = $"Не удалось удалять типы уроков преподавателя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }

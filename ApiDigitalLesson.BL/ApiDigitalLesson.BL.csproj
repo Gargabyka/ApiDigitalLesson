@@ -14,8 +14,8 @@
     <ItemGroup>
       <ProjectReference Include="..\ApiDigitalLesson.Common\ApiDigitalLesson.Common.csproj" />
       <ProjectReference Include="..\ApiDigitalLesson.Identity\ApiDigitalLesson.Identity.csproj" />
-      <ProjectReference Include="..\ApiDigitalLesson.Migration\ApiDigitalLesson.Migration.csproj" />
-      <ProjectReference Include="..\AspDigitalLesson.Model\AspDigitalLesson.Model.csproj" />
+      <ProjectReference Include="..\ApiDigitalLesson.Migrator\ApiDigitalLesson.Migrator.csproj" />
+      <ProjectReference Include="..\ApiDigitalLesson.Model\ApiDigitalLesson.Model.csproj" />
     </ItemGroup>
 
 </Project>

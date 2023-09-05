@@ -1,7 +1,7 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
 using ApiDigitalLesson.Common.CustomException;
-using ApiDigitalLesson.Migration.Context;
-using AspDigitalLesson.Model.Entity;
+using ApiDigitalLesson.Migrator.Context;
+using ApiDigitalLesson.Model.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +33,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"{typeof(T)}:Не удалось получить данные сущности: {nameof(T)}, {e.InnerException}";
+                var message = $"{typeof(T)}:Не удалось получить данные сущности: {nameof(T)}, {e.Message}";
                 _logger.LogError(message);
                 throw new ApiException(message);
             }
@@ -44,6 +44,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// </summary>
         public async Task<T> GetAsync(Guid id)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var entity = await _context.Set<T>().SingleOrDefaultAsync(x => x.Id == id);
@@ -51,11 +52,16 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 {
                     throw new ApiException($"Не удалось найти сущность: {nameof(T)} по указанному id: {id}");
                 }
+                
+                await transaction.CommitAsync();
+                
                 return entity;
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить данные сущности: {nameof(T)}, {e.InnerException}";
+                await transaction.RollbackAsync();
+                
+                var message = $"Не удалось получить данные сущности: {nameof(T)}, {e.Message}";
                 
                 _logger.LogError(message);
                 throw new ApiException(message);
@@ -67,16 +73,21 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// </summary>
         public async Task<Guid> AddAsync(T entity)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 _context.Set<T>().Add(entity);
                 await _context.SaveChangesAsync();
                 
+                await transaction.CommitAsync();
+                
                 return entity.Id;
             }
-            catch (AddException e)
+            catch (ApiException e)
             {
-                var message = $"Не удалось добавить данные сущность: {nameof(T)}, {e.InnerException}";
+                await transaction.RollbackAsync();
+                
+                var message = $"Не удалось добавить данные сущность: {nameof(T)}, {e.Message}";
                 
                 _logger.LogError(message);
                 throw new ApiException(message);
@@ -88,6 +99,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// </summary>
         public async Task<Guid> UpdateAsync(T entity)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 if (entity == null)
@@ -98,11 +110,16 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 
+                await transaction.CommitAsync();
+                
                 return entity.Id;
+                
             }
             catch (Exception e)
             {
-                var message = $"Не удалось обновить сущность: {nameof(T)}, {e.InnerException}";
+                await transaction.RollbackAsync();
+                
+                var message = $"Не удалось обновить сущность: {nameof(T)}, {e.Message}";
                 
                 _logger.LogError(message);
                 throw new ApiException(message);
@@ -114,6 +131,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// </summary>
         public async Task DeleteAsync(Guid id)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var entity = _context.Set<T>().SingleOrDefault(x => x.Id == id);
@@ -125,11 +143,15 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 _context.Set<T>().Remove(entity);
                 _context.Entry(entity).State = EntityState.Deleted;
                 await _context.SaveChangesAsync();
+                    
+                await transaction.CommitAsync();
             }
             catch (Exception e)
             {
-                var message = $"Не удалось удалить данные сущности: {nameof(T)}, {e.InnerException}";
-                
+                await transaction.RollbackAsync();
+                    
+                var message = $"Не удалось удалить данные сущности: {nameof(T)}, {e.Message}";
+
                 _logger.LogError(message);
                 throw new ApiException(message);
             }

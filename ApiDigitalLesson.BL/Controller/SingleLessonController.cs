@@ -1,5 +1,5 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.SingleLesson;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +33,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(SingleLessonController)}. Произошла ошибка при работе метода GetSingleLessonForIdAsync";
+                    $"Контроллер: {nameof(SingleLessonController)}. " +
+                    $"Произошла ошибка при работе метода GetSingleLessonForIdAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -51,7 +52,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(SingleLessonController)}. Произошла ошибка при работе метода GetSingleLessonForTeacherIdAsync";
+                    $"Контроллер: {nameof(SingleLessonController)}. " +
+                    $"Произошла ошибка при работе метода GetSingleLessonForTeacherIdAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -69,7 +71,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(SingleLessonController)}. Произошла ошибка при работе метода GetUnConfirmSingleLessonAsync";
+                    $"Контроллер: {nameof(SingleLessonController)}. " +
+                    $"Произошла ошибка при работе метода GetUnConfirmSingleLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -87,7 +90,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(SingleLessonController)}. Произошла ошибка при работе метода CreateSingleLessonAsync";
+                    $"Контроллер: {nameof(SingleLessonController)}. " +
+                    $"Произошла ошибка при работе метода CreateSingleLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -105,7 +109,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(SingleLessonController)}. Произошла ошибка при работе метода ConfirmSingleLessonAsync";
+                    $"Контроллер: {nameof(SingleLessonController)}. " +
+                    $"Произошла ошибка при работе метода ConfirmSingleLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -123,7 +128,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(SingleLessonController)}. Произошла ошибка при работе метода CancelSingleLessonAsync";
+                    $"Контроллер: {nameof(SingleLessonController)}. " +
+                    $"Произошла ошибка при работе метода CancelSingleLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);

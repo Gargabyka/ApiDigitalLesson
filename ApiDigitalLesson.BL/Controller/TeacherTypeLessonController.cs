@@ -1,5 +1,5 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.TeacherTypeLesson;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -32,7 +32,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherTypeLessonController)}. Произошла ошибка при работе метода GetTeacherTypeLessonAsync";
+                    $"Контроллер: {nameof(TeacherTypeLessonController)}. " +
+                    $"Произошла ошибка при работе метода GetTeacherTypeLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -50,7 +51,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherTypeLessonController)}. Произошла ошибка при работе метода GetTeacherTypeLessonListAsync";
+                    $"Контроллер: {nameof(TeacherTypeLessonController)}. " +
+                    $"Произошла ошибка при работе метода GetTeacherTypeLessonListAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -68,7 +70,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherTypeLessonController)}. Произошла ошибка при работе метода CreateTeacherTypeLessonAsync";
+                    $"Контроллер: {nameof(TeacherTypeLessonController)}. " +
+                    $"Произошла ошибка при работе метода CreateTeacherTypeLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -86,7 +89,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherTypeLessonController)}. Произошла ошибка при работе метода UpdateTeacherTypeLessonAsync";
+                    $"Контроллер: {nameof(TeacherTypeLessonController)}. " +
+                    $"Произошла ошибка при работе метода UpdateTeacherTypeLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -104,7 +108,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherTypeLessonController)}. Произошла ошибка при работе метода DeleteTeacherTypeLessonAsync";
+                    $"Контроллер: {nameof(TeacherTypeLessonController)}. " +
+                    $"Произошла ошибка при работе метода DeleteTeacherTypeLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);

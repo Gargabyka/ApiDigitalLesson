@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace ApiDigitalLesson.Extensions
 {
@@ -55,7 +53,7 @@ namespace ApiDigitalLesson.Extensions
                         },
                         Scheme = "oauth2",
                         Name = "Bearer",
-                        In = ParameterLocation.Header,
+                        In = ParameterLocation.Header
                     },
                     new List<string>()
                 }
@@ -72,15 +70,14 @@ namespace ApiDigitalLesson.Extensions
             var vk = new OpenApiSecurityScheme
             {
                  Name = "Authorization",
-                 Description = "ClientId = 51733352",
                  In = ParameterLocation.Header,
                  Type = SecuritySchemeType.OAuth2,
-                 Flows = new OpenApiOAuthFlows()
+                 Flows = new OpenApiOAuthFlows
                  {
-                     Implicit = new OpenApiOAuthFlow()
+                     Implicit = new OpenApiOAuthFlow
                      {
                          AuthorizationUrl = new Uri("https://oauth.vk.com/authorize"),
-                         Scopes = new Dictionary<string, string> {{"email", "email"}},
+                         Scopes = new Dictionary<string, string> {{"email", "email"}}
                      }
                  }
             };
@@ -97,13 +94,12 @@ namespace ApiDigitalLesson.Extensions
                         },
                         Scheme = "oauth2",
                         Name = "Bearer",
-                        In = ParameterLocation.Header,
+                        In = ParameterLocation.Header
                     },
-                    new List<string> {}
+                    new List<string>()
                 }
             };
             options.AddSecurityRequirement(security);
-            //options.OperationFilter<AddHeaderOperationFilter>();
             options.OperationFilter<AddResponseHeadersFilter>();
         }
         
@@ -116,17 +112,16 @@ namespace ApiDigitalLesson.Extensions
             var securityScheme = new OpenApiSecurityScheme
             {
                 Name = "Authorization",
-                Description = "Client Id = 1029338337768-oepqrj7tqakldk3ru3kqcrqs1lelhdsq.apps.googleusercontent.com",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.OAuth2,
-                Flows = new OpenApiOAuthFlows()
+                Flows = new OpenApiOAuthFlows
                 {
-                    Implicit = new OpenApiOAuthFlow()
+                    Implicit = new OpenApiOAuthFlow
                     {
                         AuthorizationUrl = new Uri("https://accounts.google.com/o/oauth2/v2/auth"),
-                        Scopes = new Dictionary<string, string> {{"email", "email"}, {"profile", "profile"}, {"openid", "openid"}},
+                        Scopes = new Dictionary<string, string> {{"email", "email"}, {"profile", "profile"}, {"openid", "openid"}}
                     }
-                },
+                }
             };
         
             swaggerGenOptions.AddSecurityDefinition("Google", securityScheme) ;
@@ -143,9 +138,9 @@ namespace ApiDigitalLesson.Extensions
                         },
                         Scheme = "oauth2",
                         Name = "Bearer",
-                        In = ParameterLocation.Header,
+                        In = ParameterLocation.Header
                     },
-                    new List<string> {}
+                    new List<string>()
                 } 
             };
             

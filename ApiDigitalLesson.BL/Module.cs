@@ -1,9 +1,6 @@
-﻿using System.Security.Claims;
-using ApiDigitalLesson.BL.Services.Impl;
+﻿using ApiDigitalLesson.BL.Services.Impl;
 using ApiDigitalLesson.BL.Services.Interface;
-using ApiDigitalLesson.Migration.Context;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+using ApiDigitalLesson.Migrator.Context;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ApiDigitalLesson.BL
@@ -13,7 +10,7 @@ namespace ApiDigitalLesson.BL
     /// </summary>
     public static class Module
     {
-        public static void AddModules(this IServiceCollection services, IConfiguration configuration)
+        public static void AddModules(this IServiceCollection services)
         {
             AddContext(services);
             AddService(services);

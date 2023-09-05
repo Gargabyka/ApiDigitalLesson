@@ -24,7 +24,7 @@ namespace ApiDigitalLesson.Identity.Seeds
                 UserName = "adminTest",
                 Email = "testAdmin@mail.ru",
                 EmailConfirmed = true,
-                PhoneNumberConfirmed = true,
+                PhoneNumberConfirmed = true
             };
 
             var user = await userManager.FindByEmailAsync(admin.Email);
@@ -42,7 +42,7 @@ namespace ApiDigitalLesson.Identity.Seeds
                 UserName = "teacherTest",
                 Email = "testTeacher@mail.ru",
                 EmailConfirmed = true,
-                PhoneNumberConfirmed = true,
+                PhoneNumberConfirmed = true
             };
 
             var user = await userManager.FindByEmailAsync(teacher.Email);
@@ -60,7 +60,7 @@ namespace ApiDigitalLesson.Identity.Seeds
                 UserName = "studentTest",
                 Email = "testStudent@mail.ru",
                 EmailConfirmed = true,
-                PhoneNumberConfirmed = true,
+                PhoneNumberConfirmed = true
             };
 
             var user = await userManager.FindByEmailAsync(student.Email);
@@ -78,14 +78,14 @@ namespace ApiDigitalLesson.Identity.Seeds
                 UserName = "moderatorTest",
                 Email = "testModerator@mail.ru",
                 EmailConfirmed = true,
-                PhoneNumberConfirmed = true,
+                PhoneNumberConfirmed = true
             };
 
             var user = await userManager.FindByEmailAsync(moderator.Email);
             if (user == null)
             {
                 await userManager.CreateAsync(moderator, "123Password!");
-                await userManager.AddToRoleAsync(moderator, Roles.Student.ToString());
+                await userManager.AddToRoleAsync(moderator, Roles.Moderator.ToString());
             }
         }
     }

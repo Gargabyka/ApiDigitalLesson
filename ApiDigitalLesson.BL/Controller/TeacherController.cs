@@ -1,5 +1,7 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.Scheduler;
+using ApiDigitalLesson.Model.Dto.Settings;
+using ApiDigitalLesson.Model.Dto.Teacher;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -23,17 +25,37 @@ namespace ApiDigitalLesson.BL.Controller
         }
         
         [HttpGet("GetTeacherUser")]
-        public async Task<IActionResult> GetTeacherUserAsync(string? id)
+        public async Task<IActionResult> GetTeacherUserAsync()
         {
             try
             {
-                var result = await _teacherService.GetTeacherUserAsync(id);
+                var result = await _teacherService.GetTeacherUserAsync();
                 return Ok(result);
             }
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода GetTeacherUserAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetTeacherUserAsync, {e.Message}";
+                
+                _logger.LogError(e,message);
+                return StatusCode(500, message);
+            }
+        }
+        
+        [HttpGet("GetTeacherSettings")]
+        public async Task<IActionResult> GetTeacherSettingsAsync()
+        {
+            try
+            {
+                var result = await _teacherService.GetTeacherSettingsAsync();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var message =
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetTeacherSettingsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -51,7 +73,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода GetTeacherAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetTeacherAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -69,7 +92,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода GetTeachersLessonAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetTeachersLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -87,7 +111,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода GetTeachersWithTypeLessonAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetTeachersWithTypeLessonAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -105,7 +130,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода CreateTeacherAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода CreateTeacherAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -113,7 +139,7 @@ namespace ApiDigitalLesson.BL.Controller
         }
         
         [HttpPost("UpdateTeacher")]
-        public async Task<IActionResult> UpdateTeacherAsync(TeacherDto teacherDto)
+        public async Task<IActionResult> UpdateTeacherAsync(UpdateTeacherDto teacherDto)
         {
             try
             {
@@ -123,7 +149,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода UpdateTeacherAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода UpdateTeacherAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -141,7 +168,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода UpdateTeacherSettingsAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода UpdateTeacherSettingsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -159,7 +187,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода CreateWeekendForTeacherAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода CreateWeekendForTeacherAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -177,7 +206,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода GetSchedulerTeacherAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetSchedulerTeacherAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -195,7 +225,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(TeacherController)}. Произошла ошибка при работе метода GetStudentsForTeacherAsync";
+                    $"Контроллер: {nameof(TeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetStudentsForTeacherAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
