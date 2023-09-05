@@ -13,21 +13,21 @@ namespace ApiDigitalLesson.Identity.Seeds
         {
             if (!roleManager.Roles.Any(x=>x.Name == Roles.Admin.ToString()))
             {
-                await roleManager.CreateAsync(new RoleIdentity()
+                await roleManager.CreateAsync(new RoleIdentity
                 {
                     Name = Roles.Admin.ToString()
                 });
             }
             if (!roleManager.Roles.Any(x => x.Name == Roles.Teacher.ToString()))
             {
-                await roleManager.CreateAsync(new RoleIdentity()
+                await roleManager.CreateAsync(new RoleIdentity
                 {
                     Name = Roles.Teacher.ToString()
                 });
             }
             if (!roleManager.Roles.Any(x => x.Name == Roles.Student.ToString()))
             {
-                await roleManager.CreateAsync(new RoleIdentity()
+                await roleManager.CreateAsync(new RoleIdentity
                 {
                     Name = Roles.Student.ToString()
                 });
@@ -35,7 +35,7 @@ namespace ApiDigitalLesson.Identity.Seeds
 
             if (!roleManager.Roles.Any(x => x.Name == Roles.Moderator.ToString()))
             {
-                await roleManager.CreateAsync(new RoleIdentity()
+                await roleManager.CreateAsync(new RoleIdentity
                 {
                     Name = Roles.Moderator.ToString()
                 });

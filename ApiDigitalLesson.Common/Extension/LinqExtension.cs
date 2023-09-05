@@ -25,11 +25,11 @@ namespace ApiDigitalLesson.Common.Extension
         {
             yield return parentNode;
 
-            IEnumerable<T> childNodes = childNodesSelector(parentNode);
+            var childNodes = childNodesSelector(parentNode);
+            
             if (childNodes != null)
             {
-                foreach (T childNode in
-                         childNodes.SelectMany(x => x.TraverseTree(childNodesSelector)))
+                foreach (var childNode in childNodes.SelectMany(x => x.TraverseTree(childNodesSelector)))
                 {
                     yield return childNode;
                 }

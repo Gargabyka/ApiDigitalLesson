@@ -1,7 +1,6 @@
 ﻿using ApiDigitalLesson.BL.Services.Impl;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
-using Microsoft.AspNetCore.Mvc;
+using ApiDigitalLesson.Model.Dto.AboutTeacher;
 
 namespace ApiDigitalLesson.BL.Services.Interface
 {
@@ -18,7 +17,7 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Создать отзыв о преподавателе
         /// </summary>
-        Task CreateAboutTeacherAsync(AboutTeacherDto aboutTeacherDto);
+        Task CreateAboutTeacherAsync(CreateAboutTeacherDto aboutTeacherDto);
 
         /// <summary>
         /// Удалить отзыв о преподавателе

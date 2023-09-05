@@ -2,12 +2,15 @@
 using ApiDigitalLesson.Common.CustomException;
 using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Model;
-using ApiDigitalLesson.Common.Services.Impl.Telegram;
-using AspDigitalLesson.Model.Const;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
+using ApiDigitalLesson.Common.Services.Interface.Telegram;
+using ApiDigitalLesson.Model.Const;
+using ApiDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.Scheduler;
+using ApiDigitalLesson.Model.Dto.Settings;
+using ApiDigitalLesson.Model.Dto.Student;
+using ApiDigitalLesson.Model.Dto.Teacher;
+using ApiDigitalLesson.Model.Entity;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -29,6 +32,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly IMapper _mapper;
         private readonly ILogger<StudentService> _logger;
         private readonly ITelegramService _telegramService;
+        private readonly IViolatorsService _violatorsService;
 
         public StudentService(
             IGenericRepository<Students> studentsRepository,
@@ -41,7 +45,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
             IMapper mapper, 
             ILogger<StudentService> logger,
             ITelegramService telegramService, 
-            IUserIdentityService identityService)
+            IUserIdentityService identityService, 
+            IViolatorsService violatorsService)
         {
             _studentsRepository = studentsRepository;
             _singleLessonsRepository = singleLessonsRepository;
@@ -53,26 +58,31 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _schedulerGenericRepository = schedulerGenericRepository;
             _telegramService = telegramService;
             _identityService = identityService;
+            _violatorsService = violatorsService;
             _settingsStudentGenericRepository = settingsStudentGenericRepository;
         }
+        
+        /// <summary>
+        /// Проверка пользователя на бан
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> IsBanned() => await _violatorsService.IsBannedCurrentUserAsync();
 
         /// <summary>
         /// Получить студента пользователя
         /// </summary>
-        public async Task<BaseResponse<StudentsDto>> GetStudentUserAsync(string? userId)
+        public async Task<BaseResponse<StudentsDto>> GetStudentUserAsync()
         {
             try
             {
-                var user = userId != null && !userId.IsNull()
-                    ? await _identityService.GetUserForEmailAsync(userId)
-                    : await _identityService.GetCurrentUserAsync();
+                var user = await _identityService.GetCurrentUserAsync();
                 
                 var student = await _studentsRepository.GetAll()
-                    .SingleOrDefaultAsync(x => x.UserId == Guid.Parse(user.Id));
+                    .SingleOrDefaultAsync(x => x.UserId.ToString() == user.Id);
 
                 if (student == null)
                 {
-                    throw new Exception("Не удалось получить студента пользователя");
+                    throw new Exception("Не удалось получить студента пользователя.");
                 }
 
                 var result = _mapper.Map<StudentsDto>(student);
@@ -81,7 +91,38 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить студента по id: {userId}, {e.InnerException}";
+                var message = $"Не удалось получить студента пользователя, {e.Message}.";
+                _logger.LogError(message);
+                throw new Exception(message);
+            }
+        }
+                
+        /// <summary>
+        /// Получить настройки студента
+        /// </summary>
+        public async Task<BaseResponse<SettingsStudentDto>> GetStudentSettingsAsync()
+        {
+            try
+            {
+                var students = _studentsRepository.GetAll();
+                var currentUser = await _identityService.GetCurrentUserAsync();
+
+                var student = await students
+                    .Include(x=>x.SettingsStudent)
+                    .SingleOrDefaultAsync(x => x.UserId.ToString() == currentUser.Id);
+
+                if (student == null)
+                {
+                    throw new Exception("Не удалось найти студента");
+                }
+                
+                var result = _mapper.Map<SettingsStudentDto>(student.SettingsStudent);
+                
+                return new BaseResponse<SettingsStudentDto>(result);
+            }
+            catch (Exception e)
+            {
+                var message = $"Не удалось получить настройки студента, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -107,7 +148,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить студента по id: {id}, {e.InnerException}";
+                var message = $"Не удалось получить студента по id: {id}, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -131,8 +172,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 var studentsList = _studentsRepository.GetAll();
                 var teacherList = _teacherRepository.GetAll();
 
-                if (studentsList.Any(x => x.UserId == Guid.Parse(user.Id)) || 
-                    teacherList.Any(x=>x.UserId == Guid.Parse(user.Id)))
+                if (studentsList.Any(x => x.UserId.ToString() == user.Id))
                 {
                     throw new Exception("Пользователь под таким пользователем уже существует");
                 }
@@ -143,7 +183,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     throw new Exception("Пользователь с таким TelegramId уже существует");
                 }
 
-                var settingsStudent = new SettingsStudent()
+                var settingsStudent = new SettingsStudent
                 {
                     Id = Guid.NewGuid(),
                     IsAllowCreateLesson = false,
@@ -157,12 +197,12 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     IsRequestForLessonEmail = true,
                     IsAcceptForLessonEmail = true,
                     IsCancelLessonEmail = true,
-                    IsLessonComingSoonEmail = true,
+                    IsLessonComingSoonEmail = true
                 };
 
                 var settingsId = await _settingsStudentGenericRepository.AddAsync(settingsStudent);
 
-                var newStudent = new Students()
+                var newStudent = new Students
                 {
                     Id = Guid.NewGuid(),
                     Name = student.Name,
@@ -188,7 +228,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось создать нового студента по id: {id}, {e.InnerException}";
+                var message = $"Не удалось создать нового студента по id: {id}, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -197,37 +237,43 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить настройки студента
         /// </summary>
-        public async Task UpdateStudentSettingsAsync(StudentSettingsDto settingsDto, string studentId)
+        public async Task UpdateStudentSettingsAsync(SettingsStudentDto dto, string studentId)
         {
             try
             {
-                var student = await _studentsRepository.GetAsync(Guid.Parse(studentId));
-                var currentUser = await _identityService.GetCurrentUserAsync();
-
-                if (student.UserId.ToString() != currentUser.Id)
+                if (await IsBanned())
                 {
-                    throw new Exception("Нельзя изменять не своего пользователя");
+                    throw new Exception("Пользователь заблокирован.");
+                }
+                
+                var allStudents = _studentsRepository.GetAll();
+                var currentUser = await _identityService.GetCurrentUserAsync();
+                var student = await allStudents.SingleOrDefaultAsync(x => x.UserId.ToString() == currentUser.Id);
+
+                if (student == null)
+                {
+                    throw new ApiException("Не удалось найти студена.");
                 }
 
                 var settings = student.SettingsStudent;
-                settings.IsAllowCreateLesson = settingsDto.IsAllowCreateLesson;
-                settings.IsNotificationTelegram = settingsDto.IsNotificationTelegram;
-                settings.IsRequestForLessonTelegram = settingsDto.IsRequestForLessonTelegram;
-                settings.IsAcceptForLessonTelegram = settingsDto.IsAcceptForLessonTelegram;
-                settings.IsLessonComingSoonTelegram = settingsDto.IsLessonComingSoonTelegram;
-                settings.IsCancelLessonTelegram = settings.IsCancelLessonTelegram;
-                settings.TimeBeforeLesson = settingsDto.TimeBeforeLesson;
-                settings.IsNotificationEmail = settingsDto.IsNotificationEmail;
-                settings.IsRequestForLessonEmail = settingsDto.IsRequestForLessonEmail;
-                settings.IsAcceptForLessonEmail = settingsDto.IsAcceptForLessonEmail;
-                settings.IsLessonComingSoonEmail = settingsDto.IsLessonComingSoonEmail;
-                settings.IsCancelLessonEmail = settingsDto.IsCancelLessonEmail;
+                settings.IsAllowCreateLesson = dto.IsAllowCreateLesson != settings.IsAllowCreateLesson ? dto.IsAllowCreateLesson : settings.IsAllowCreateLesson;
+                settings.IsNotificationTelegram = dto.IsAllowCreateLesson != settings.IsAllowCreateLesson ? dto.IsAllowCreateLesson : settings.IsAllowCreateLesson;
+                settings.IsRequestForLessonTelegram = dto.IsRequestForLessonTelegram != settings.IsRequestForLessonTelegram ? dto.IsRequestForLessonTelegram : settings.IsRequestForLessonTelegram;
+                settings.IsAcceptForLessonTelegram = dto.IsAcceptForLessonTelegram != settings.IsAcceptForLessonTelegram ? dto.IsAcceptForLessonTelegram : settings.IsAcceptForLessonTelegram;
+                settings.IsLessonComingSoonTelegram = dto.IsLessonComingSoonTelegram != settings.IsLessonComingSoonTelegram ? dto.IsLessonComingSoonTelegram : settings.IsLessonComingSoonTelegram;
+                settings.IsCancelLessonTelegram = dto.IsCancelLessonTelegram != settings.IsCancelLessonTelegram ? dto.IsCancelLessonTelegram : settings.IsCancelLessonTelegram;
+                settings.TimeBeforeLesson = dto.TimeBeforeLesson != settings.TimeBeforeLesson ? dto.TimeBeforeLesson : settings.TimeBeforeLesson;
+                settings.IsNotificationEmail = dto.IsNotificationEmail != settings.IsNotificationEmail ? dto.IsNotificationEmail : settings.IsNotificationEmail;
+                settings.IsRequestForLessonEmail = dto.IsRequestForLessonEmail != settings.IsRequestForLessonEmail ? dto.IsRequestForLessonEmail : settings.IsRequestForLessonEmail;
+                settings.IsAcceptForLessonEmail = dto.IsAcceptForLessonEmail != settings.IsAcceptForLessonEmail ? dto.IsAcceptForLessonEmail : settings.IsAcceptForLessonEmail;
+                settings.IsLessonComingSoonEmail = dto.IsLessonComingSoonEmail != settings.IsLessonComingSoonEmail ? dto.IsLessonComingSoonEmail : settings.IsLessonComingSoonEmail;
+                settings.IsCancelLessonEmail = dto.IsCancelLessonEmail != settings.IsCancelLessonEmail ? dto.IsCancelLessonEmail : settings.IsCancelLessonEmail;
 
                 await _settingsStudentGenericRepository.UpdateAsync(settings);
             }
             catch (Exception e)
             {
-                var message = $"Не удалось обновить настройки студента по id: {studentId}, {e.InnerException}";
+                var message = $"Не удалось обновить настройки студента по id: {studentId}, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -236,50 +282,50 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Обновить данные студента
         /// </summary>
-        public async Task UpdateStudentsAsync(StudentsDto studentsDto)
+        public async Task UpdateStudentsAsync(UpdateStudentsDto studentsDto)
         {
             try
             {
+                if (await IsBanned())
+                {
+                    throw new Exception("Пользователь заблокирован.");
+                }
+                
                 var allStudents = _studentsRepository.GetAll();
                 var teacherList = _teacherRepository.GetAll();
-                
-                var student = await allStudents.SingleOrDefaultAsync(x => x.Id == studentsDto.Id);
+
+                var currentUser = await _identityService.GetCurrentUserAsync();
+                var student = await allStudents.SingleOrDefaultAsync(x => x.UserId.ToString() == currentUser.Id);
 
                 if (student == null)
                 {
-                    throw new ApiException("Не удалось найти студена");
+                    throw new ApiException("Не удалось найти студена.");
                 }
-                
-                var currentUser = await _identityService.GetCurrentUserAsync();
 
-                if (student.UserId.ToString() != currentUser.Id)
-                {
-                    throw new Exception("Нельзя изменять не своего пользователя");
-                }
-                
                 if (student.TelegramId != studentsDto.TelegramId &&
-                    (allStudents.Any(x => x.TelegramId == student.TelegramId) ||
-                    teacherList.Any(x=>x.TelegramId == student.TelegramId)))
+                    (allStudents.Any(x => x.TelegramId == studentsDto.TelegramId) ||
+                     teacherList.Any(x=>x.TelegramId == studentsDto.TelegramId)))
                 {
-                    throw new Exception("Пользователь с таким TelegramId уже существует");
+                    throw new Exception("Пользователь с таким TelegramId уже существует.");
                 }
-                
-                student.Phone = studentsDto.Phone;
-                student.TelegramId = studentsDto.TelegramId;
-                student.Description = studentsDto.Description;
+
+                student.Phone = studentsDto.Phone ?? student.Phone;
+                student.TelegramId = studentsDto.TelegramId ?? student.TelegramId;
+                student.Description = studentsDto.Description ?? student.Description;
+                student.Email = studentsDto.Email ?? student.Email;
 
                 await _studentsRepository.UpdateAsync(student);
 
                 if (student.TelegramId.HasValue && student.TelegramId.Value != 0)
                 {
                     var message =
-                        $"Уважаемый(ая) {student.Surname} {student.Name} {student.MiddleName}, вы успешно привязали телеграмм к своему аккаунту";
+                        $"Уважаемый(ая) {student.Surname} {student.Name} {student.MiddleName}, вы успешно привязали телеграмм к своему аккаунту.";
                     await _telegramService.SendMessageAsync(student.TelegramId.Value, message);
                 }
             }
             catch (Exception e)
             {
-                var message = $"Не удалось обновить информацию о студенте по id: {studentsDto.Id}, {e.InnerException}";
+                var message = $"Не удалось обновить информацию о студенте по id. {e.Message}.";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -288,23 +334,19 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Получить всех преподавателей студента
         /// </summary>
-        public async Task<BaseResponse<List<TeacherDto>>> GetListTeacherForStudentAsync(string id)
+        public async Task<BaseResponse<List<TeacherDto>>> GetListTeacherForStudentAsync()
         {
             try
             {
-                if (id.IsNull())
-                {
-                    throw new ApiException("Не передан Id студента");
-                }
-                
                 var typeLessonList = new List<TeacherTypeLesson>();
 
-                var students = _studentsRepository.GetAll();
-                var student = await students.SingleOrDefaultAsync(x => x.Id == Guid.Parse(id));
+                var allStudents = _studentsRepository.GetAll();
+                var currentUser = await _identityService.GetCurrentUserAsync();
+                var student = await allStudents.SingleOrDefaultAsync(x => x.UserId.ToString() == currentUser.Id);
 
                 if (student == null)
                 {
-                    throw new ApiException("Не удалось найти студента");
+                    throw new ApiException("Не удалось найти студена.");
                 }
 
                 var singleLesson = await _singleLessonsRepository.GetAll()
@@ -337,7 +379,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить всех преподавателей студента, {e.InnerException}";
+                var message = $"Не удалось получить всех преподавателей студента, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -371,7 +413,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
                 var singleScheduler = await scheduler
                     .Where(x => singleLesson.Contains(x.Id))
-                    .Select(x => new SchedulerDto()
+                    .Select(x => new SchedulerDto
                     {
                         Id = x.Id,
                         SingleLessonId = x.SingleLessonId,
@@ -390,7 +432,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
                 var groupScheduler = await scheduler
                     .Where(x => groupLesson.Contains(x.Id))
-                    .Select(x => new SchedulerDto()
+                    .Select(x => new SchedulerDto
                     {
                         Id = x.Id,
                         GroupLessonId = x.GroupLessonId,
@@ -413,7 +455,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить расписание студента, {e.InnerException}";
+                var message = $"Не удалось получить расписание студента, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }

@@ -1,8 +1,8 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
 using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
+using ApiDigitalLesson.Model.Dto.Violators;
+using ApiDigitalLesson.Model.Entity;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -46,6 +46,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             {
                 var violators = await _violatorsGenericRepository
                     .GetAll()
+                    .OrderBy(x=> x.DateCreatedViolator)
                     .ToListAsync();
 
                 var result = _mapper.Map<List<ViolatorsDto>>(violators);
@@ -54,7 +55,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить список нарушений, {e.InnerException}";
+                var message = $"Не удалось получить список нарушений, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -70,9 +71,9 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 var currentUser = await _identityService.GetCurrentUserAsync();
                 var createdUser = await _identityService.GetUserForIdAsync(violatorsDto.UserId);
 
-                if (currentUser.Id == createdUser.Id)
+                if (currentUser.Id != createdUser.Id)
                 {
-                    throw new Exception("Нельзя написать жалобу на самого себя");
+                    throw new Exception("Нельзя написать жалобу от другого пользователя");
                 }
 
                 var teacher = await _teacherGenericRepository
@@ -82,6 +83,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 var student = await _studentsGenericRepository
                     .GetAll()
                     .SingleOrDefaultAsync(x => x.Id.ToString() == violatorsDto.StudentId);
+
+                if (currentUser.Id == teacher?.UserId.ToString() || currentUser.Id == student?.UserId.ToString())
+                {
+                    throw new Exception("Нельзя написать жалобу от самого себя");
+                }
 
                 if (violatorsDto.Comment.IsNull())
                 {
@@ -108,7 +114,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось создать жалобу пользователю, {e.InnerException}";
+                var message = $"Не удалось создать жалобу пользователю, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -135,7 +141,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось забанить пользователя, {e.InnerException}";
+                var message = $"Не удалось забанить пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -156,7 +162,29 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось отменить жалобу пользователя, {e.InnerException}";
+                var message = $"Не удалось отменить жалобу пользователя, {e.Message}";
+                _logger.LogError(message);
+                throw new Exception(message);
+            }
+        }
+
+        /// <summary>
+        /// Разбанить нарушителя
+        /// </summary>
+        public async Task UnbanViolatorsAsync(string id)
+        {
+            try
+            {
+                var violators = await _violatorsGenericRepository.GetAsync(Guid.Parse(id));
+
+                violators.IsBanned = false;
+                violators.DateBan = null;
+
+                await _violatorsGenericRepository.UpdateAsync(violators);
+            }
+            catch (Exception e)
+            {
+                var message = $"Не удалось разбанить пользователя. {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -196,7 +224,42 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось проверить бан пользователя, {e.InnerException}";
+                var message = $"Не удалось проверить бан пользователя, {e.Message}";
+                _logger.LogError(message);
+                throw new Exception(message);
+            }
+        }
+        
+        /// <summary>
+        /// Проверка текущего пользователя на бан
+        /// </summary>
+        public async Task<bool> IsBannedCurrentUserAsync()
+        {
+            try
+            {
+                var user = await _identityService.GetCurrentUserAsync();
+                
+                var teacher = await _teacherGenericRepository.GetAll()
+                    .SingleOrDefaultAsync(x=>x.UserId.ToString() == user.Id);
+                
+                var student = await _studentsGenericRepository.GetAll()
+                   .SingleOrDefaultAsync(x=>x.UserId.ToString() == user.Id);
+
+                if (student == null && teacher == null)
+                {
+                    throw new Exception("Не объявлен нарушитель");
+                }
+                
+                var isBanned = await _violatorsGenericRepository.GetAll()
+                    .Where(x=> teacher != null && x.TeacherId == teacher.Id)
+                    .Where(x=> student != null && x.StudentId == student.Id)
+                    .AnyAsync(x=>x.IsBanned && x.DateBan > DateTime.UtcNow);
+                
+                return isBanned;
+            }
+            catch (Exception e)
+            {
+                var message = $"Не удалось проверить бан пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }

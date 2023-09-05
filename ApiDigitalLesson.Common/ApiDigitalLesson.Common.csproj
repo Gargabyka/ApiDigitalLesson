@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AspDigitalLesson.Model\AspDigitalLesson.Model.csproj" />
+    <ProjectReference Include="..\ApiDigitalLesson.Model\ApiDigitalLesson.Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>

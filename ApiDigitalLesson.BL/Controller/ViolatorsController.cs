@@ -1,6 +1,6 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using AspDigitalLesson.Model.Const;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Const;
+using ApiDigitalLesson.Model.Dto.Violators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -36,7 +36,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ViolatorsController)}. Произошла ошибка при работе метода GetViolatorsListAsync";
+                    $"Контроллер: {nameof(ViolatorsController)}. " +
+                    $"Произошла ошибка при работе метода GetViolatorsListAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -54,7 +55,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ViolatorsController)}. Произошла ошибка при работе метода CreateViolatorAsync";
+                    $"Контроллер: {nameof(ViolatorsController)}. " +
+                    $"Произошла ошибка при работе метода CreateViolatorAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -73,7 +75,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ViolatorsController)}. Произошла ошибка при работе метода BannedViolatorsAsync";
+                    $"Контроллер: {nameof(ViolatorsController)}. " +
+                    $"Произошла ошибка при работе метода BannedViolatorsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -92,7 +95,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ViolatorsController)}. Произошла ошибка при работе метода CancelViolatorsAsync";
+                    $"Контроллер: {nameof(ViolatorsController)}. " +
+                    $"Произошла ошибка при работе метода CancelViolatorsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -110,7 +114,28 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ViolatorsController)}. Произошла ошибка при работе метода IsBannedAsync";
+                    $"Контроллер: {nameof(ViolatorsController)}. " +
+                    $"Произошла ошибка при работе метода IsBannedAsync, {e.Message}";
+                
+                _logger.LogError(e,message);
+                return StatusCode(500, message);
+            }
+        }
+        
+        [Authorize(Roles = Roles.Admin +","+ Roles.Moderator)]
+        [HttpPost("UnbanViolators")]
+        public async Task<IActionResult> UnbanViolatorsAsync(string id)
+        {
+            try
+            {
+                await _violatorsService.UnbanViolatorsAsync(id);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                var message =
+                    $"Контроллер: {nameof(ViolatorsController)}. " +
+                    $"Произошла ошибка при работе метода UnbanViolatorsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);

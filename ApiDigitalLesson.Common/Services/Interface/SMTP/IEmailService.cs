@@ -1,4 +1,4 @@
-﻿using ApiDigitalLesson.Identity.Models.Request;
+﻿using ApiDigitalLesson.Model.Request;
 
 namespace ApiDigitalLesson.Common.Services.Interface.SMTP
 {

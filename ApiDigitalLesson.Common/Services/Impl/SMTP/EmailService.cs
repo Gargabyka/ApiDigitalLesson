@@ -1,6 +1,6 @@
 ﻿using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Services.Interface.SMTP;
-using ApiDigitalLesson.Identity.Models.Request;
+using ApiDigitalLesson.Model.Request;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -45,7 +45,7 @@ namespace ApiDigitalLesson.Common.Services.Impl.SMTP
             }
             catch (Exception e)
             {
-                var message = $"Произошла ошибка при отправки сообщения по SMTP, {e.InnerException}";
+                var message = $"Произошла ошибка при отправки сообщения по SMTP, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -57,7 +57,7 @@ namespace ApiDigitalLesson.Common.Services.Impl.SMTP
             request.Sender = _mailSettings.Sender;
         }
 
-        private MimeMessage GetEmailMessage(EmailRequest request)
+        private static MimeMessage GetEmailMessage(EmailRequest request)
         {
             var email = new MimeMessage();
             
@@ -71,7 +71,7 @@ namespace ApiDigitalLesson.Common.Services.Impl.SMTP
             return email;
         }
 
-        private MimeEntity BuildBody(EmailRequest request)
+        private static MimeEntity BuildBody(EmailRequest request)
         {
             return new TextPart(MimeKit.Text.TextFormat.Html)
             {
@@ -79,13 +79,13 @@ namespace ApiDigitalLesson.Common.Services.Impl.SMTP
             };
         }
 
-        private string GenerateHtml(EmailRequest request)
+        private static string GenerateHtml(EmailRequest request)
         {
             var link = !request.Link.IsNull()
                 ? $@"<a class=""button"" href=""{request.Link}"">Перейти на сайт</a>"
                 : string.Empty;
 
-            if (request.Body.Contains("\n"))
+            if (request.Body.Contains('\n'))
             {
                 request.Body = request.Body.Replace("\n", "<br>");
             }

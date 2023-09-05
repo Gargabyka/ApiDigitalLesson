@@ -1,6 +1,6 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using AspDigitalLesson.Model.Const;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Const;
+using ApiDigitalLesson.Model.Dto.Moderator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -35,7 +35,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ModeratorController)}. Произошла ошибка при работе метода GetModeratorUserAsync";
+                    $"Контроллер: {nameof(ModeratorController)}. " +
+                    $"Произошла ошибка при работе метода GetModeratorUserAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -53,7 +54,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ModeratorController)}. Произошла ошибка при работе метода GetModeratorListAsync";
+                    $"Контроллер: {nameof(ModeratorController)}. " +
+                    $"Произошла ошибка при работе метода GetModeratorListAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -71,7 +73,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ModeratorController)}. Произошла ошибка при работе метода GetModeratorAsync";
+                    $"Контроллер: {nameof(ModeratorController)}. " +
+                    $"Произошла ошибка при работе метода GetModeratorAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -89,7 +92,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ModeratorController)}. Произошла ошибка при работе метода CreateModeratorAsync";
+                    $"Контроллер: {nameof(ModeratorController)}. " +
+                    $"Произошла ошибка при работе метода CreateModeratorAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -108,7 +112,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(ModeratorController)}. Произошла ошибка при работе метода DeleteModeratorAsync";
+                    $"Контроллер: {nameof(ModeratorController)}. " +
+                    $"Произошла ошибка при работе метода DeleteModeratorAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);

@@ -1,6 +1,6 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using AspDigitalLesson.Model.Const;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Const;
+using ApiDigitalLesson.Model.Dto.AboutTeacher;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -36,13 +36,14 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(AboutTeacherController)}. Произошла ошибка при работе метода GetAboutTeachersListAsync";
-                
-                _logger.LogError(e,message);
+                    $"Контроллер: {nameof(AboutTeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetAboutTeachersListAsync, {e.Message}";
+
+                _logger.LogError(e, message);
                 return StatusCode(500, message);
             }
         }
-        
+
         [HttpGet("GetAvengerRatingForTeacher")]
         public async Task<IActionResult> GetAvengerRatingForTeacherAsync(string id)
         {
@@ -54,15 +55,16 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(AboutTeacherController)}. Произошла ошибка при работе метода GetAvengerRatingForTeacher";
-                
-                _logger.LogError(e,message);
+                    $"Контроллер: {nameof(AboutTeacherController)}. " +
+                    $"Произошла ошибка при работе метода GetAvengerRatingForTeacher, {e.Message}";
+
+                _logger.LogError(e, message);
                 return StatusCode(500, message);
             }
         }
 
         [HttpPost("CreateAboutTeacher")]
-        public async Task<IActionResult> CreateAboutTeacherAsync(AboutTeacherDto aboutTeacherDto)
+        public async Task<IActionResult> CreateAboutTeacherAsync(CreateAboutTeacherDto aboutTeacherDto)
         {
             try
             {
@@ -72,14 +74,15 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(AboutTeacherController)}. Произошла ошибка при работе метода CreateAboutTeacherAsync";
-                
-                _logger.LogError(e,message);
+                    $"Контроллер: {nameof(AboutTeacherController)}. " +
+                    $"Произошла ошибка при работе метода CreateAboutTeacherAsync, {e.Message}";
+
+                _logger.LogError(e, message);
                 return StatusCode(500, message);
             }
         }
 
-        [Authorize(Roles = Roles.Admin +","+ Roles.Moderator)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Moderator)]
         [HttpPost("DeleteAboutTeacher")]
         public async Task<IActionResult> DeleteAboutTeacherAsync(string id)
         {
@@ -91,8 +94,9 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(AboutTeacherController)}. Произошла ошибка при работе метода DeleteAboutTeacherAsync";
-                    
+                    $"Контроллер: {nameof(AboutTeacherController)}. " +
+                    $"Произошла ошибка при работе метода DeleteAboutTeacherAsync, {e.Message}";
+
                 _logger.LogError(e, message);
                 return StatusCode(500, message);
             }

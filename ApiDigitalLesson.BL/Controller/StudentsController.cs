@@ -1,5 +1,7 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.Settings;
+using ApiDigitalLesson.Model.Dto.Student;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -23,17 +25,37 @@ namespace ApiDigitalLesson.BL.Controller
         }
         
         [HttpGet("GetStudentUser")]
-        public async Task<IActionResult> GetStudentUserAsync(string? id)
+        public async Task<IActionResult> GetStudentUserAsync()
         {
             try
             {
-                var result = await _studentsService.GetStudentUserAsync(id);
+                var result = await _studentsService.GetStudentUserAsync();
                 return Ok(result);
             }
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(StudentsController)}. Произошла ошибка при работе метода GetStudentUserAsync";
+                    $"Контроллер: {nameof(StudentsController)}. " +
+                    $"Произошла ошибка при работе метода GetStudentUserAsync, {e.Message}";
+                
+                _logger.LogError(e,message);
+                return StatusCode(500, message);
+            }
+        }
+
+        [HttpGet("GetStudentSettings")]
+        public async Task<IActionResult> GetStudentSettingsAsync()
+        {
+            try
+            {
+                var result = await _studentsService.GetStudentSettingsAsync();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var message =
+                    $"Контроллер: {nameof(StudentsController)}. " +
+                    $"Произошла ошибка при работе метода GetStudentSettingsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -51,7 +73,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(StudentsController)}. Произошла ошибка при работе метода GetStudentsAsync";
+                    $"Контроллер: {nameof(StudentsController)}. " +
+                    $"Произошла ошибка при работе метода GetStudentsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -69,7 +92,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(StudentsController)}. Произошла ошибка при работе метода CreateStudentsAsync";
+                    $"Контроллер: {nameof(StudentsController)}. " +
+                    $"Произошла ошибка при работе метода CreateStudentsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -77,7 +101,7 @@ namespace ApiDigitalLesson.BL.Controller
         }
 
         [HttpPost("UpdateStudents")]
-        public async Task<IActionResult> UpdateStudentsAsync(StudentsDto students)
+        public async Task<IActionResult> UpdateStudentsAsync(UpdateStudentsDto students)
         {
             try
             {
@@ -87,7 +111,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(StudentsController)}. Произошла ошибка при работе метода UpdateStudentsAsync";
+                    $"Контроллер: {nameof(StudentsController)}. " +
+                    $"Произошла ошибка при работе метода UpdateStudentsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -95,17 +120,18 @@ namespace ApiDigitalLesson.BL.Controller
         }
         
         [HttpPost("UpdateStudentSettings")]
-        public async Task<IActionResult> UpdateStudentSettingsAsync(StudentSettingsDto settingsDto, string studentId)
+        public async Task<IActionResult> UpdateStudentSettingsAsync(SettingsStudentDto dto, string studentId)
         {
             try
             {
-                await _studentsService.UpdateStudentSettingsAsync(settingsDto, studentId);
+                await _studentsService.UpdateStudentSettingsAsync(dto, studentId);
                 return Ok();
             }
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(StudentsController)}. Произошла ошибка при работе метода UpdateStudentSettingsAsync";
+                    $"Контроллер: {nameof(StudentsController)}. " +
+                    $"Произошла ошибка при работе метода UpdateStudentSettingsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -113,17 +139,18 @@ namespace ApiDigitalLesson.BL.Controller
         }
 
         [HttpGet("GetListTeacherForStudent")]
-        public async Task<IActionResult> GetListTeacherForStudentAsync(string id)
+        public async Task<IActionResult> GetListTeacherForStudentAsync()
         {
             try
             {
-                var result = await _studentsService.GetListTeacherForStudentAsync(id);
+                var result = await _studentsService.GetListTeacherForStudentAsync();
                 return Ok(result);
             }
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(StudentsController)}. Произошла ошибка при работе метода GetListTeacherForStudentAsync";
+                    $"Контроллер: {nameof(StudentsController)}. " +
+                    $"Произошла ошибка при работе метода GetListTeacherForStudentAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);
@@ -141,7 +168,8 @@ namespace ApiDigitalLesson.BL.Controller
             catch (Exception e)
             {
                 var message =
-                    $"Контроллер: {nameof(StudentsController)}. Произошла ошибка при работе метода GetScheduleStudentsAsync";
+                    $"Контроллер: {nameof(StudentsController)}. " +
+                    $"Произошла ошибка при работе метода GetScheduleStudentsAsync, {e.Message}";
                 
                 _logger.LogError(e,message);
                 return StatusCode(500, message);

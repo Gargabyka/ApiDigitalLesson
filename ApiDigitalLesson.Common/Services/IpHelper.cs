@@ -6,7 +6,7 @@ namespace ApiDigitalLesson.Common.Services
     /// <summary>
     /// Класс для работы с Ip
     /// </summary>
-    public class IpHelper
+    public static class IpHelper
     {
         /// <summary>
         /// Получить Ip адрес 

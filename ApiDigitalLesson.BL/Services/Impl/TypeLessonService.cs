@@ -2,11 +2,12 @@
 using ApiDigitalLesson.BL.Services.Interface;
 using ApiDigitalLesson.Common.Extension;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
-using Microsoft.AspNetCore.Mvc;
+using ApiDigitalLesson.Model.Dto.TypeLesson;
+using ApiDigitalLesson.Model.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ApiDigitalLesson.BL.Services.Impl
 {
@@ -17,13 +18,18 @@ namespace ApiDigitalLesson.BL.Services.Impl
     {
         private readonly IGenericRepository<TypeLessons> _typeLessonGenericRepository;
         private readonly ILogger<TypeLessonService> _logger;
+        private readonly IDistributedCache _cache;
+        
+        private const string TypeLessonCacheKey = "TypeLesson";
 
         public TypeLessonService(
             IGenericRepository<TypeLessons> typeLessonGenericRepository, 
-            ILogger<TypeLessonService> logger)
+            ILogger<TypeLessonService> logger, 
+            IDistributedCache cache)
         {
             _typeLessonGenericRepository = typeLessonGenericRepository;
             _logger = logger;
+            _cache = cache;
         }
 
         /// <summary>
@@ -33,12 +39,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
-                var result = new TypeLessons()
+                var result = new TypeLessons
                 {
                     Id = Guid.NewGuid(),
                     Name = typeLesson.Name,
                     Description = typeLesson.Description,
-                    Category = typeLesson.Category,
                     ParentId = typeLesson.ParentId
                 };
 
@@ -46,7 +51,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось создать новый тип урока, {e.InnerException}";
+                var message = $"Не удалось создать новый тип урока, {e.Message}";
                 
                 _logger.LogError(message);
                 throw new Exception(message);
@@ -88,20 +93,36 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
-                var typeLessons = await _typeLessonGenericRepository.GetAll().ToListAsync();
+                var typeLessonsCache = await _cache.GetStringAsync(TypeLessonCacheKey);
+
+                if (!string.IsNullOrEmpty(typeLessonsCache))
+                {
+                    var typeLessonsResult = JsonConvert.DeserializeObject<ImmutableList<TypeLessons>>(typeLessonsCache);
+
+                    if (typeLessonsResult != null)
+                    {
+                        return new BaseResponse<ImmutableList<TypeLessons>>(typeLessonsResult);
+                    }
+                }
+                
+                var typeLessons = _typeLessonGenericRepository.GetAll();
 
                 var result = typeLessons
                     .AsEnumerable()
                     .SelectMany(x => x.TraverseTree(y => y.SubCategories))
                     .Where(x => !x.ParentId.HasValue)
-                    .OrderBy(x => x.Category)
+                    .OrderBy(x => x.Name)
                     .ToImmutableList();
+
+                var cache = JsonConvert.SerializeObject(result);
+                
+                await _cache.SetStringAsync(TypeLessonCacheKey, cache);
 
                 return new BaseResponse<ImmutableList<TypeLessons>>(result);
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить список типов уроков, {e.InnerException}";
+                var message = $"Не удалось получить список типов уроков, {e.Message}";
                 
                 _logger.LogError(message);
                 throw new Exception(message);
@@ -134,7 +155,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось удалить тип урока, {e.InnerException}";
+                var message = $"Не удалось удалить тип урока, {e.Message}";
                 
                 _logger.LogError(message);
                 throw new Exception(message);

@@ -1,6 +1,7 @@
 ﻿using ApiDigitalLesson.BL.Services.Impl;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.Violators;
 
 namespace ApiDigitalLesson.BL.Services.Interface
 {
@@ -33,5 +34,15 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// Проверка пользователя на бан
         /// </summary>
         Task<bool> IsBannedAsync(string? teacherId, string? studentId);
+
+        /// <summary>
+        /// Проверка текущего пользователя на бан
+        /// </summary>
+        Task<bool> IsBannedCurrentUserAsync();
+
+        /// <summary>
+        /// Разбан нарушителя
+        /// </summary>
+        Task UnbanViolatorsAsync(string id);
     }
 }

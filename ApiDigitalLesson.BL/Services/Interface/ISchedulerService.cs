@@ -1,5 +1,6 @@
 ﻿using ApiDigitalLesson.BL.Services.Impl;
-using AspDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.Scheduler;
 
 namespace ApiDigitalLesson.BL.Services.Interface
 {

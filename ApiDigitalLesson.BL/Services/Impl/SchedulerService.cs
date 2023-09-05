@@ -1,7 +1,7 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
-using AspDigitalLesson.Model.Model;
+using ApiDigitalLesson.Model.Dto.Scheduler;
+using ApiDigitalLesson.Model.Entity;
+using ApiDigitalLesson.Model.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -64,21 +64,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     })
                     .ToListAsync();
 
-                foreach (var date in schedulerTeacher)
-                {
-                    var result = Intersects(date, dateNew);
-
-                    if (result)
-                    {
-                        return result;
-                    }
-                }
-
-                return false;
+                return schedulerTeacher.Select(date => Intersects(date, dateNew)).FirstOrDefault(result => result);
             }
             catch (Exception e)
             {
-                var message = $"Произошла ошибка при поиске пересечения дат, {e.InnerException}";
+                var message = $"Произошла ошибка при поиске пересечения дат, {e.Message}";
                 
                 _logger.LogError(message);
                 throw new Exception(message);
@@ -88,7 +78,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Проверка на пересечение дат
         /// </summary>
-        private bool Intersects(DateTimeRange dateInTable, DateTimeRange dateNew)
+        private static bool Intersects(DateTimeRange dateInTable, DateTimeRange dateNew)
         {
             if(dateInTable.StartDate > dateInTable.EndDate || dateNew.StartDate > dateNew.EndDate)
                 throw new Exception("Ошибка в проставлении дат");

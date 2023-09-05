@@ -1,7 +1,9 @@
 ﻿using ApiDigitalLesson.BL.Services.Impl;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
-using Microsoft.AspNetCore.Mvc;
+using ApiDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.Scheduler;
+using ApiDigitalLesson.Model.Dto.Settings;
+using ApiDigitalLesson.Model.Dto.Teacher;
 
 namespace ApiDigitalLesson.BL.Services.Interface
 {
@@ -13,7 +15,12 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Получить преподавателя пользователя
         /// </summary>
-        Task<BaseResponse<TeacherDto>> GetTeacherUserAsync(string? userId);
+        Task<BaseResponse<TeacherDto>> GetTeacherUserAsync();
+
+        /// <summary>
+        /// Получить настройки преподавателя
+        /// </summary>
+        Task<BaseResponse<SettingsTeacherDto>> GetTeacherSettingsAsync();
 
         /// <summary>
         /// Получить список преподавателей
@@ -44,7 +51,7 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Обновить информацию по преподавателю
         /// </summary>
-        Task UpdateTeacherAsync(TeacherDto teacherDto);
+        Task UpdateTeacherAsync(UpdateTeacherDto teacherDto);
 
         /// <summary>
         /// Получить расписание преподавателя

@@ -2,7 +2,7 @@ using ApiDigitalLesson.BL;
 using ApiDigitalLesson.Common;
 using ApiDigitalLesson.Extensions;
 using ApiDigitalLesson.Identity;
-using AspDigitalLesson.Model.Mapping;
+using ApiDigitalLesson.Model.Mapping;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,20 +24,23 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Add services to the container.
+builder.Services.AddStackExchangeRedisCache(options => {
+    options.Configuration = config["Redis:Host"];
+    options.InstanceName = config["Redis:InstanceName"];
+});
+
 builder.Services.AddCustomSwagger();
 builder.Services.AddSingleton(config);
 builder.Services.AddIdentity(config);
-builder.Services.AddModules(config);
+builder.Services.AddModules();
 builder.Services.AddCommonModules(config);
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
-        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Serialize;
     });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 

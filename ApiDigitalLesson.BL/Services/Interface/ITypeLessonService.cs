@@ -1,9 +1,9 @@
 ﻿using System.Collections.Immutable;
 using ApiDigitalLesson.BL.Services.Impl;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
-using Microsoft.AspNetCore.Mvc;
+using ApiDigitalLesson.Model.Dto;
+using ApiDigitalLesson.Model.Dto.TypeLesson;
+using ApiDigitalLesson.Model.Entity;
 
 namespace ApiDigitalLesson.BL.Services.Interface
 {

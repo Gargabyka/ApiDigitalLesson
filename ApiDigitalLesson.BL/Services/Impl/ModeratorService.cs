@@ -1,8 +1,8 @@
 ﻿using ApiDigitalLesson.BL.Services.Interface;
 using ApiDigitalLesson.Common.Model;
-using AspDigitalLesson.Model.Const;
-using AspDigitalLesson.Model.Dto;
-using AspDigitalLesson.Model.Entity;
+using ApiDigitalLesson.Model.Const;
+using ApiDigitalLesson.Model.Dto.Moderator;
+using ApiDigitalLesson.Model.Entity;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -45,7 +45,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить список модераторов, {e.InnerException}";
+                var message = $"Не удалось получить список модераторов, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -62,13 +62,18 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 var moderator = await _moderatorGenericRepository.GetAll()
                     .SingleOrDefaultAsync(x => x.UserId.ToString() == currentUser.Id);
 
+                if (moderator == null)
+                {
+                    throw new Exception("Пользователь не является модератором");
+                }
+
                 var result = _mapper.Map<ModeratorDto>(moderator);
 
                 return new BaseResponse<ModeratorDto>(result);
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить модератора пользователя, {e.InnerException}";
+                var message = $"Не удалось получить модератора пользователя, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -90,7 +95,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось получить модератора по id:{id}, {e.InnerException}";
+                var message = $"Не удалось получить модератора по id:{id}, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -116,7 +121,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     throw new Exception("Модератор под таким пользователем уже существует");
                 }
 
-                var moderator = new Moderator()
+                var moderator = new Moderator
                 {
                     Id = Guid.NewGuid(),
                     Name = moderatorDto.Name,
@@ -125,14 +130,14 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     Phone = user.PhoneNumber,
                     Email = user.Email,
                     UserId = Guid.Parse(user.Id),
-                    DateBirthday = moderatorDto.DateBirthday,
+                    DateBirthday = moderatorDto.DateBirthday
                 };
                 
                 await _moderatorGenericRepository.AddAsync(moderator);
             }
             catch (Exception e)
             {
-                var message = $"Не удалось создать модератора, {e.InnerException}";
+                var message = $"Не удалось создать модератора, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -154,7 +159,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             }
             catch (Exception e)
             {
-                var message = $"Не удалось удалить модератора, {e.InnerException}";
+                var message = $"Не удалось удалить модератора, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
