@@ -60,6 +60,26 @@ namespace ApiDigitalLesson.BL.Controller
             }
         }
         
+                
+        [HttpGet("GetSingleLessonForStudentId")]
+        public async Task<IActionResult> GetSingleLessonForStudentIdAsync(string studentId)
+        {
+            try
+            {
+                var result = await _singleLessonService.GetSingleLessonForStudentIdAsync(studentId);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var message =
+                    $"Контроллер: {nameof(SingleLessonController)}. " +
+                    $"Произошла ошибка при работе метода GetSingleLessonForStudentIdAsync, {e.Message}";
+                
+                _logger.LogError(e,message);
+                return StatusCode(500, message);
+            }
+        }
+        
         [HttpGet("GetUnConfirmSingleLesson")]
         public async Task<IActionResult> GetUnConfirmSingleLessonAsync()
         {

@@ -18,7 +18,7 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// <summary>
         /// Получить список типов уроков преподавателя
         /// </summary>
-        Task<BaseResponse<List<TeacherTypeLessonDto>>> GetTeacherTypeLessonListAsync(string? teacherId);
+        Task<BaseResponse<List<TeacherTypeLessonDto>>> GetTeacherTypeLessonListAsync(string teacherId);
 
         /// <summary>
         /// Создать тип урока преподавателя

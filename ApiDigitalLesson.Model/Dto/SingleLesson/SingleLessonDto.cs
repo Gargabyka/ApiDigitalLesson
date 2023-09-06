@@ -1,4 +1,6 @@
-﻿namespace ApiDigitalLesson.Model.Dto.SingleLesson
+﻿using ApiDigitalLesson.Model.Dto.Teacher;
+
+namespace ApiDigitalLesson.Model.Dto.SingleLesson
 {
     /// <summary>
     /// DTO сущности <see cref="SingleLesson"/>
@@ -46,8 +48,18 @@
         public Guid StudentId { get; set; }
         
         /// <summary>
+        /// Id преподавателя
+        /// </summary>
+        public Guid TeacherId { get; set; }
+        
+        /// <summary>
         /// Студент
         /// </summary>
         public StudentsDto Student { get; set; }
+        
+        /// <summary>
+        /// Преподаватель
+        /// </summary>
+        public TeacherDto Teacher { get; set; }
     }
 }

@@ -14,7 +14,9 @@ using ApiDigitalLesson.Model.Dto.TypeLesson;
 using ApiDigitalLesson.Model.Entity;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ApiDigitalLesson.BL.Services.Impl
 {
@@ -37,6 +39,12 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly ILogger<TeacherService> _logger;
         private readonly IUserIdentityService _identityService;
         private readonly IViolatorsService _violatorsService;
+        private readonly IDistributedCache _cache;
+        
+        private const string TeacherCacheKey = "TeacherCacheKey";
+        private const string TeacherListCacheKey = "TeacherListCacheKey";
+        private const string TeacherWithLessonListCacheKey = "TeacherWithLessonListCacheKey";
+
 
         public TeacherService(
             IGenericRepository<Students> studentsRepository, 
@@ -52,7 +60,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
             ITelegramService telegramService, 
             ISchedulerService schedulerService, 
             IUserIdentityService identityService, 
-            IViolatorsService violatorsService)
+            IViolatorsService violatorsService, 
+            IDistributedCache cache)
         {
             _studentsRepository = studentsRepository;
             _groupLessonsRepository = groupLessonsRepository;
@@ -68,6 +77,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _schedulerService = schedulerService;
             _identityService = identityService;
             _violatorsService = violatorsService;
+            _cache = cache;
         }
 
         /// <summary>
@@ -85,6 +95,19 @@ namespace ApiDigitalLesson.BL.Services.Impl
             {
                 var user = await _identityService.GetCurrentUserAsync();
                 
+                var cacheKey = $"{TeacherCacheKey}_{user.Id}";
+                var teacherCache = await _cache.GetStringAsync(cacheKey);
+
+                if (!string.IsNullOrEmpty(teacherCache))
+                {
+                    var teacherCacheResult = JsonConvert.DeserializeObject<TeacherDto>(teacherCache);
+
+                    if (teacherCacheResult != null)
+                    {
+                        return new BaseResponse<TeacherDto>(teacherCacheResult);
+                    }
+                }
+                
                 var teacher = await _teacherRepository.GetAll()
                     .SingleOrDefaultAsync(x => x.UserId.ToString() == user.Id);
 
@@ -94,6 +117,12 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 } 
 
                 var result = _mapper.Map<TeacherDto>(teacher);
+                
+                var cacheResult = JsonConvert.SerializeObject(result);
+                await _cache.SetStringAsync(cacheKey, cacheResult, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
 
                 return new BaseResponse<TeacherDto>(result);
             }
@@ -169,9 +198,27 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                var teachersCache = await _cache.GetStringAsync(TeacherListCacheKey);
+
+                if (!string.IsNullOrEmpty(teachersCache))
+                {
+                    var teachersCacheResult = JsonConvert.DeserializeObject<List<TeacherDto>>(teachersCache);
+
+                    if (teachersCacheResult != null)
+                    {
+                        return new BaseResponse<List<TeacherDto>>(teachersCacheResult);
+                    }
+                }
+                
                 var teachers = await _teacherRepository.GetAll().ToListAsync();
 
                 var result = _mapper.Map<List<TeacherDto>>(teachers);
+                
+                var cacheResult = JsonConvert.SerializeObject(result);
+                await _cache.SetStringAsync(TeacherListCacheKey, cacheResult, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
 
                 return new BaseResponse<List<TeacherDto>>(result);
             }
@@ -191,6 +238,18 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                var teachersCache = await _cache.GetStringAsync(TeacherWithLessonListCacheKey);
+
+                if (!string.IsNullOrEmpty(teachersCache))
+                {
+                    var teachersCacheResult = JsonConvert.DeserializeObject<List<TeacherWithTypeLessonDto>>(teachersCache);
+
+                    if (teachersCacheResult != null)
+                    {
+                        return new BaseResponse<List<TeacherWithTypeLessonDto>>(teachersCacheResult);
+                    }
+                }
+                
                 var teacherTypeLessonList = _teacherTypeLessonsRepository.GetAll();
                 var teachers = await _teacherRepository.GetAll()
                     .Select(x => new TeacherWithTypeLessonDto
@@ -230,6 +289,12 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     
                     teacher.TeacherTypeLesson.AddRange(teacherTypeLesson);
                 }
+
+                var cache = JsonConvert.SerializeObject(teachers);
+                await _cache.SetStringAsync(TeacherWithLessonListCacheKey, cache, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
 
                 return new BaseResponse<List<TeacherWithTypeLessonDto>>(teachers);
             }
@@ -308,6 +373,9 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
                 
                 await _teacherRepository.AddAsync(teacher);
+
+                await _cache.SetStringAsync(TeacherWithLessonListCacheKey, null);
+                await _cache.SetStringAsync(TeacherListCacheKey, null);
                 
                 if (teacher.TelegramId.HasValue && teacher.TelegramId.Value != 0)
                 {
@@ -347,6 +415,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 {
                     throw new Exception("Такого преподавателя не существует.");
                 }
+                
+                var cacheKey = $"{TeacherCacheKey}_{currentUser.Id}";
 
                 if (teacher.TelegramId != teacherDto.TelegramId &&
                     (allStudents.Any(x => x.TelegramId == teacherDto.TelegramId) ||
@@ -361,6 +431,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 teacher.Photo = teacherDto.Photo;
                 
                 await _teacherRepository.UpdateAsync(teacher);
+                await _cache.SetStringAsync(cacheKey, null);
 
                 if (teacher.TelegramId.HasValue && teacher.TelegramId.Value != 0)
                 {

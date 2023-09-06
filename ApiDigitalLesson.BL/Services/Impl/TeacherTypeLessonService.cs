@@ -5,7 +5,9 @@ using ApiDigitalLesson.Model.Dto.TeacherTypeLesson;
 using ApiDigitalLesson.Model.Dto.TypeLesson;
 using ApiDigitalLesson.Model.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ApiDigitalLesson.BL.Services.Impl
 {
@@ -20,6 +22,9 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly IUserIdentityService _identityService;
         private readonly ILogger<TeacherTypeLessonService> _logger;
         private readonly IViolatorsService _violatorsService;
+        private readonly IDistributedCache _cache;
+        
+        private const string TeacherTypeLessonCacheKey = "TeacherTypeLessonCacheKey";
 
         public TeacherTypeLessonService(
             IGenericRepository<TeacherTypeLesson> teacherTypeLessonGenericRepository, 
@@ -27,7 +32,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
             IGenericRepository<TypeLessons> typeLessonsGenericRepository, 
             IUserIdentityService identityService, 
             ILogger<TeacherTypeLessonService> logger, 
-            IViolatorsService violatorsService)
+            IViolatorsService violatorsService, 
+            IDistributedCache cache)
         {
             _teacherTypeLessonGenericRepository = teacherTypeLessonGenericRepository;
             _teacherGenericRepository = teacherGenericRepository;
@@ -35,6 +41,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _identityService = identityService;
             _logger = logger;
             _violatorsService = violatorsService;
+            _cache = cache;
         }
         
         /// <summary>
@@ -51,6 +58,22 @@ namespace ApiDigitalLesson.BL.Services.Impl
             try
             {
                 var teacherTypeLesson = await _teacherTypeLessonGenericRepository.GetAsync(Guid.Parse(id));
+                
+                var teacherTypeLessonCache = await _cache.GetStringAsync($"{TeacherTypeLessonCacheKey}_{teacherTypeLesson.TeacherId}");
+                
+                if (!string.IsNullOrEmpty(teacherTypeLessonCache))
+                {
+                    var typeLessonsResult =
+                        JsonConvert.DeserializeObject<List<TeacherTypeLessonDto>>(teacherTypeLessonCache);
+
+                    var cacheResult = typeLessonsResult?.SingleOrDefault(x => x.Id == id);
+
+                    if (cacheResult != null)
+                    {
+                        return new BaseResponse<TeacherTypeLessonDto>(cacheResult);
+                    }
+                }
+                
                 var typeLesson = await _typeLessonsGenericRepository.GetAsync(teacherTypeLesson.TypeLessonsId);
 
                 var result = new TeacherTypeLessonDto
@@ -85,12 +108,24 @@ namespace ApiDigitalLesson.BL.Services.Impl
         /// <summary>
         /// Получить список типов уроков преподавателя
         /// </summary>
-        public async Task<BaseResponse<List<TeacherTypeLessonDto>>> GetTeacherTypeLessonListAsync(string? teacherId)
+        public async Task<BaseResponse<List<TeacherTypeLessonDto>>> GetTeacherTypeLessonListAsync(string teacherId)
         {
             try
             {
+                var teacherTypeLessonCache = await _cache.GetStringAsync($"{TeacherTypeLessonCacheKey}_{teacherId}");
+
+                if (!string.IsNullOrEmpty(teacherTypeLessonCache))
+                {
+                    var typeLessonsResult = JsonConvert.DeserializeObject<List<TeacherTypeLessonDto>>(teacherTypeLessonCache);
+
+                    if (typeLessonsResult != null)
+                    {
+                        return new BaseResponse<List<TeacherTypeLessonDto>>(typeLessonsResult);
+                    }
+                }
+                
                 var result = await _teacherTypeLessonGenericRepository.GetAll()
-                    .WhereIf(!teacherId.IsNull(), x => x.TeacherId.ToString() == teacherId)
+                    .Where(x => x.TeacherId.ToString() == teacherId)
                     .Select(x => new TeacherTypeLessonDto
                     {
                         Id = x.Id.ToString(),
@@ -111,6 +146,13 @@ namespace ApiDigitalLesson.BL.Services.Impl
                         Price = x.Price
                     })
                     .ToListAsync();
+                
+                var cache = JsonConvert.SerializeObject(result);
+                
+                await _cache.SetStringAsync($"{TeacherTypeLessonCacheKey}_{teacherId}", cache, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
 
                 return new BaseResponse<List<TeacherTypeLessonDto>>(result);
             }
@@ -173,6 +215,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
 
                 await _teacherTypeLessonGenericRepository.AddAsync(teacherTypeLesson);
+                await _cache.SetStringAsync($"{TeacherTypeLessonCacheKey}_{teacher.Id}", null);
             }
             catch (Exception e)
             {
@@ -212,6 +255,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 teacherTypeLesson.Price = typeLessonDto.Price ?? teacherTypeLesson.Price;
 
                 await _teacherTypeLessonGenericRepository.UpdateAsync(teacherTypeLesson);
+                await _cache.SetStringAsync($"{TeacherTypeLessonCacheKey}_{teacher.Id}", null);
             }
             catch (Exception e)
             {
@@ -244,6 +288,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 }
 
                 await _teacherTypeLessonGenericRepository.DeleteAsync(Guid.Parse(id));
+                await _cache.SetStringAsync($"{TeacherTypeLessonCacheKey}_{teacher.Id}", null);
             }
             catch (Exception e)
             {

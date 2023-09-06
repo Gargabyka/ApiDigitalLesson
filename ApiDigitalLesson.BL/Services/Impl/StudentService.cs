@@ -7,12 +7,15 @@ using ApiDigitalLesson.Model.Const;
 using ApiDigitalLesson.Model.Dto;
 using ApiDigitalLesson.Model.Dto.Scheduler;
 using ApiDigitalLesson.Model.Dto.Settings;
+using ApiDigitalLesson.Model.Dto.SingleLesson;
 using ApiDigitalLesson.Model.Dto.Student;
 using ApiDigitalLesson.Model.Dto.Teacher;
 using ApiDigitalLesson.Model.Entity;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ApiDigitalLesson.BL.Services.Impl
 {
@@ -33,6 +36,9 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly ILogger<StudentService> _logger;
         private readonly ITelegramService _telegramService;
         private readonly IViolatorsService _violatorsService;
+        private readonly IDistributedCache _cache;
+        
+        private const string StudentCacheKey = "StudentCacheKey";
 
         public StudentService(
             IGenericRepository<Students> studentsRepository,
@@ -46,7 +52,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
             ILogger<StudentService> logger,
             ITelegramService telegramService, 
             IUserIdentityService identityService, 
-            IViolatorsService violatorsService)
+            IViolatorsService violatorsService, 
+            IDistributedCache cache)
         {
             _studentsRepository = studentsRepository;
             _singleLessonsRepository = singleLessonsRepository;
@@ -59,9 +66,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _telegramService = telegramService;
             _identityService = identityService;
             _violatorsService = violatorsService;
+            _cache = cache;
             _settingsStudentGenericRepository = settingsStudentGenericRepository;
         }
-        
+
         /// <summary>
         /// Проверка пользователя на бан
         /// </summary>
@@ -77,6 +85,20 @@ namespace ApiDigitalLesson.BL.Services.Impl
             {
                 var user = await _identityService.GetCurrentUserAsync();
                 
+                var cacheKey = $"{StudentCacheKey}_{user.Id}";
+                
+                var studentsCache = await _cache.GetStringAsync(cacheKey);
+
+                if (!string.IsNullOrEmpty(studentsCache))
+                {
+                    var studentsCacheResult = JsonConvert.DeserializeObject<StudentsDto>(studentsCache);
+
+                    if (studentsCacheResult != null)
+                    {
+                        return new BaseResponse<StudentsDto>(studentsCacheResult);
+                    }
+                }
+                
                 var student = await _studentsRepository.GetAll()
                     .SingleOrDefaultAsync(x => x.UserId.ToString() == user.Id);
 
@@ -86,6 +108,13 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 }
 
                 var result = _mapper.Map<StudentsDto>(student);
+                
+                var cache = JsonConvert.SerializeObject(result);
+                
+                await _cache.SetStringAsync(cacheKey, cache, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
             
                 return new BaseResponse<StudentsDto>(result);
             }
@@ -315,6 +344,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 student.Email = studentsDto.Email ?? student.Email;
 
                 await _studentsRepository.UpdateAsync(student);
+                await _cache.SetStringAsync($"{StudentCacheKey}_{currentUser.Id}", null);
 
                 if (student.TelegramId.HasValue && student.TelegramId.Value != 0)
                 {

@@ -39,6 +39,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                await _cache.SetStringAsync(TypeLessonCacheKey, null);
+                
                 var result = new TypeLessons
                 {
                     Id = Guid.NewGuid(),
@@ -65,6 +67,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                await _cache.SetStringAsync(TypeLessonCacheKey, null);
+                
                 var typeLessons = _typeLessonGenericRepository.GetAll();
                 var lesson = await typeLessons.SingleOrDefaultAsync(x => x.Id == typeLesson.Id);
                 
@@ -116,7 +120,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
 
                 var cache = JsonConvert.SerializeObject(result);
                 
-                await _cache.SetStringAsync(TypeLessonCacheKey, cache);
+                await _cache.SetStringAsync(TypeLessonCacheKey, cache, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
 
                 return new BaseResponse<ImmutableList<TypeLessons>>(result);
             }
@@ -136,6 +143,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                await _cache.SetStringAsync(TypeLessonCacheKey, null);
+                
                 var typeLessons = _typeLessonGenericRepository.GetAll();
                 var lesson = await typeLessons.SingleOrDefaultAsync(x => x.Id == id);
 

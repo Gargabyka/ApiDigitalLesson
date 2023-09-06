@@ -6,10 +6,13 @@ using ApiDigitalLesson.Model.Dto;
 using ApiDigitalLesson.Model.Dto.Notification;
 using ApiDigitalLesson.Model.Dto.Scheduler;
 using ApiDigitalLesson.Model.Dto.SingleLesson;
+using ApiDigitalLesson.Model.Dto.Teacher;
 using ApiDigitalLesson.Model.Entity;
 using ApiDigitalLesson.Model.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Roles = ApiDigitalLesson.Model.Const.Roles;
 
 namespace ApiDigitalLesson.BL.Services.Impl
@@ -31,6 +34,12 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly INotificationService _notificationService;
         private readonly ISchedulerService _schedulerService;
         private readonly IViolatorsService _violatorsService;
+        private readonly IDistributedCache _cache;
+        
+        
+        private const string SingleLessonStudentCacheKey = "SingleLessonStudentCacheKey";
+        private const string SingleLessonTeacherCacheKey = "SingleLessonTeacherCacheKey";
+        private const string SingleLessonUnconfirmedCacheKey = "SingleLessonUnconfirmedCacheKey";
 
         public SingleLessonService(
             IGenericRepository<Students> studentsRepository,
@@ -44,7 +53,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
             ISchedulerService schedulerService, 
             IGenericRepository<SettingsTeacher> settingsTeacherGenericRepository, 
             IGenericRepository<SettingsStudent> settingsStudentGenericRepository, 
-            IViolatorsService violatorsService)
+            IViolatorsService violatorsService, 
+            IDistributedCache cache)
         {
             _studentsRepository = studentsRepository;
             _teacherTypeLessonsRepository = teacherTypeLessonsRepository;
@@ -58,6 +68,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _settingsTeacherGenericRepository = settingsTeacherGenericRepository;
             _settingsStudentGenericRepository = settingsStudentGenericRepository;
             _violatorsService = violatorsService;
+            _cache = cache;
         }
         
         /// <summary>
@@ -129,6 +140,20 @@ namespace ApiDigitalLesson.BL.Services.Impl
         {
             try
             {
+                var cacheKey = $"{SingleLessonTeacherCacheKey}_{teacherId}";
+                
+                var singleLessonCache = await _cache.GetStringAsync(cacheKey);
+
+                if (!string.IsNullOrEmpty(singleLessonCache))
+                {
+                    var typeLessonsResult = JsonConvert.DeserializeObject<List<SingleLessonWithScheduler>>(singleLessonCache);
+
+                    if (typeLessonsResult != null)
+                    {
+                        return new BaseResponse<List<SingleLessonWithScheduler>>(typeLessonsResult);
+                    }
+                }
+                
                 var teacher = await _teacherRepository.GetAsync(Guid.Parse(teacherId));
                 var singleLesson = _singleLessonRepository.GetAll();
 
@@ -169,12 +194,94 @@ namespace ApiDigitalLesson.BL.Services.Impl
                         }
                     })
                     .ToListAsync();
+                
+                var cache = JsonConvert.SerializeObject(result);
+                
+                await _cache.SetStringAsync(cacheKey, cache, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
+
 
                 return new BaseResponse<List<SingleLessonWithScheduler>>(result);
             }
             catch (Exception e)
             {
                 var message = $"Не удалось получить индивидуальные уроки преподавателя, {e.Message}";
+                _logger.LogError(message);
+                throw new Exception(message);
+            }
+        }
+
+        /// <summary>
+        /// Получить индивидуальные уроки студента
+        /// </summary>
+        public async Task<BaseResponse<List<SingleLessonWithScheduler>>> GetSingleLessonForStudentIdAsync(string studentId)
+        {
+            try
+            {
+                var cacheKey = $"{SingleLessonStudentCacheKey}_{studentId}";
+                
+                var singleLessonCache = await _cache.GetStringAsync(cacheKey);
+
+                if (!string.IsNullOrEmpty(singleLessonCache))
+                {
+                    var typeLessonsResult = JsonConvert.DeserializeObject<List<SingleLessonWithScheduler>>(singleLessonCache);
+
+                    if (typeLessonsResult != null)
+                    {
+                        return new BaseResponse<List<SingleLessonWithScheduler>>(typeLessonsResult);
+                    }
+                }
+                
+                var student = await _studentsRepository.GetAsync(Guid.Parse(studentId));
+
+                var result = await _schedulerGenericRepository.GetAll()
+                    .Include(x => x.SingleLesson)
+                    .ThenInclude(x => x.TeacherTypeLesson)
+                    .ThenInclude(x => x.Teacher)
+                    .Where(x=>x.SingleLesson.StudentsId == student.Id)
+                    .Where(x=> x.SingleLesson.IsConfirmedForStudent && x.SingleLesson.IsConfirmedForTeacher)
+                    .Select(x => new SingleLessonWithScheduler
+                    {
+                        Id = x.SingleLesson.Id,
+                        TeacherTypeLessonId = x.SingleLesson.TeacherTypeLessonId,
+                        IsCancel = x.SingleLesson.IsCancel,
+                        IsConfirmedStudent = x.SingleLesson.IsConfirmedForStudent,
+                        IsConfirmedTeacher = x.SingleLesson.IsConfirmedForTeacher,
+                        IsFinish = x.SingleLesson.IsFinish,
+                        Scheduler = new SchedulerDto
+                        {
+                            Id = x.Id,
+                            SingleLessonId = x.SingleLessonId,
+                            TeacherId = x.TeacherId,
+                            NameLesson = x.SingleLesson.TeacherTypeLesson.TypeLessons.Name,
+                            Description = x.Description,
+                            DateStart = x.DateStart,
+                            DateEnd = x.DateEnd
+                        },
+                        StudentId = x.SingleLesson.StudentsId,
+                        Teacher = new TeacherDto
+                        {
+                            Id = x.SingleLesson.TeacherTypeLesson.Teacher.Id,
+                            Name = x.SingleLesson.TeacherTypeLesson.Teacher.Name,
+                            MiddleName = x.SingleLesson.TeacherTypeLesson.Teacher.MiddleName,
+                            Surname = x.SingleLesson.TeacherTypeLesson.Teacher.Surname
+                        }
+                    })
+                    .ToListAsync();
+                
+                var cache = JsonConvert.SerializeObject(result);
+                await _cache.SetStringAsync(cacheKey, cache, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
+                
+                return new BaseResponse<List<SingleLessonWithScheduler>>(result);
+            }
+            catch (Exception e)
+            {
+                var message = $"Не удалось получить индивидуальные уроки студента, {e.Message}";
                 _logger.LogError(message);
                 throw new Exception(message);
             }
@@ -260,6 +367,9 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
 
                 await _schedulerGenericRepository.AddAsync(scheduler);
+                
+                await _cache.SetStringAsync($"{SingleLessonTeacherCacheKey}_{teacher.Id}", null);
+                await _cache.SetStringAsync($"{SingleLessonUnconfirmedCacheKey}_{currentUser.Id}", null);
             }
             catch (AddException e)
             {
@@ -286,6 +396,20 @@ namespace ApiDigitalLesson.BL.Services.Impl
             {
                 var currentUser = await _identityService.GetCurrentUserAsync();
                 var currentRole = await _identityService.GetRoleCurrentUserAsync();
+                
+                var cacheKey = $"{SingleLessonUnconfirmedCacheKey}_{currentUser.Id}";
+                
+                var unConfirmSingleLessonCache = await _cache.GetStringAsync(cacheKey);
+
+                if (!string.IsNullOrEmpty(unConfirmSingleLessonCache))
+                {
+                    var typeLessonsResult = JsonConvert.DeserializeObject<List<SingleLessonWithScheduler>>(unConfirmSingleLessonCache);
+
+                    if (typeLessonsResult != null)
+                    {
+                        return new BaseResponse<List<SingleLessonWithScheduler>>(typeLessonsResult);
+                    }
+                }
 
                 var singleLesson = await _singleLessonRepository.GetAll()
                     .WhereIf(currentRole == Roles.Teacher,
@@ -294,7 +418,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     .WhereIf(currentRole == Roles.Student,
                         x => x.Students.UserId.ToString() == currentUser.Id && !x.IsConfirmedForStudent)
                     .ToListAsync();
-                
+
                 var result = await _schedulerGenericRepository.GetAll()
                     .Where(x => x.SingleLessonId.HasValue 
                                 && singleLesson.Select(lesson=>lesson.Id).Contains(x.SingleLesson.Id))
@@ -326,7 +450,13 @@ namespace ApiDigitalLesson.BL.Services.Impl
                         }
                     })
                     .ToListAsync();
-
+                
+                var cache = JsonConvert.SerializeObject(result);
+                await _cache.SetStringAsync(cacheKey, cache, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1)
+                });
+                
                 return new BaseResponse<List<SingleLessonWithScheduler>>(result);
             }
             catch (Exception e)
@@ -407,6 +537,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 };
 
                 await _notificationService.SendNotification(notification);
+                
+                await _cache.SetStringAsync($"{SingleLessonStudentCacheKey}_{student.Id}", null);
+                await _cache.SetStringAsync($"{SingleLessonTeacherCacheKey}_{teacher.Id}", null);
+                await _cache.SetStringAsync($"{SingleLessonUnconfirmedCacheKey}_{currentUser.Id}", null);
             }
             catch (Exception e)
             {
@@ -519,6 +653,9 @@ namespace ApiDigitalLesson.BL.Services.Impl
             };
 
             await _notificationService.SendNotification(notification);
+            
+            await _cache.SetStringAsync($"{SingleLessonStudentCacheKey}_{student.Id}", null);
+            await _cache.SetStringAsync($"{SingleLessonUnconfirmedCacheKey}_{currentUser.Id}", null);
         }
 
         /// <summary>
@@ -564,6 +701,9 @@ namespace ApiDigitalLesson.BL.Services.Impl
             };
 
             await _notificationService.SendNotification(notification);
+
+            await _cache.SetStringAsync($"{SingleLessonTeacherCacheKey}_{teacher.Id}", null);
+            await _cache.SetStringAsync($"{SingleLessonUnconfirmedCacheKey}_{currentUser.Id}", null);
         }
 
         /// <summary>

@@ -38,5 +38,10 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// Отменить индивидуальный урок
         /// </summary>
         Task CancelSingleLessonAsync(string id, string description);
+
+        /// <summary>
+        /// Получить индивидуальные уроки студента
+        /// </summary>
+        Task<BaseResponse<List<SingleLessonWithScheduler>>> GetSingleLessonForStudentIdAsync(string studentId);
     }
 }
