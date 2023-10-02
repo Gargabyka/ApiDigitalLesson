@@ -37,6 +37,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
         private readonly ITelegramService _telegramService;
         private readonly IViolatorsService _violatorsService;
         private readonly IDistributedCache _cache;
+        private readonly ICitiesServices _citiesServices;
         
         private const string StudentCacheKey = "StudentCacheKey";
 
@@ -53,7 +54,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             ITelegramService telegramService, 
             IUserIdentityService identityService, 
             IViolatorsService violatorsService, 
-            IDistributedCache cache)
+            IDistributedCache cache, ICitiesServices citiesServices)
         {
             _studentsRepository = studentsRepository;
             _singleLessonsRepository = singleLessonsRepository;
@@ -67,6 +68,7 @@ namespace ApiDigitalLesson.BL.Services.Impl
             _identityService = identityService;
             _violatorsService = violatorsService;
             _cache = cache;
+            _citiesServices = citiesServices;
             _settingsStudentGenericRepository = settingsStudentGenericRepository;
         }
 
@@ -106,8 +108,11 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 {
                     throw new Exception("Не удалось получить студента пользователя.");
                 }
-
+                
+                var cities = await _citiesServices.GetCitiesByIdAsync(student.CitiesId.ToString());
                 var result = _mapper.Map<StudentsDto>(student);
+ 
+                result.CityName = cities;
                 
                 var cache = JsonConvert.SerializeObject(result);
                 
@@ -170,8 +175,10 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 }
 
                 var student = await _studentsRepository.GetAsync(Guid.Parse(id));
+                var cities = await _citiesServices.GetCitiesByIdAsync(student.CitiesId.ToString());
 
                 var result = _mapper.Map<StudentsDto>(student);
+                result.CityName = cities;
             
                 return new BaseResponse<StudentsDto>(result);
             }
@@ -243,7 +250,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     Description = student.Description,
                     UserId = Guid.Parse(user.Id),
                     DateBirthday = student.DateBirthday,
-                    SettingsStudentId = settingsId
+                    SettingsStudentId = settingsId,
+                    CitiesId = Guid.Parse(student.CitiesId)
                 };
             
                 await _studentsRepository.AddAsync(newStudent);

@@ -46,5 +46,15 @@
         /// Id пользователя 
         /// </summary>
         public Guid UserId { get; set; }
+        
+        /// <summary>
+        /// Id города
+        /// </summary>
+        public Guid CitiesId { get; set; }
+        
+        /// <summary>
+        /// Город
+        /// </summary>
+        public Cities Cities { get; set; }
     }
 }

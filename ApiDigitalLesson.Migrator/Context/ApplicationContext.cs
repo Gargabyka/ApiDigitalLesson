@@ -28,6 +28,7 @@ namespace ApiDigitalLesson.Migrator.Context
         public DbSet<SettingsTeacher> SettingsTeacher { get; set; }
         public DbSet<Moderator> Moderators { get; set; }
         public DbSet<Violators> Violators { get; set; }
+        public DbSet<Cities> Cities { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

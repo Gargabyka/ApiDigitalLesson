@@ -54,5 +54,15 @@
         /// Дата рождения
         /// </summary>
         public DateTime? DateBirthday { get; set; }
+        
+        /// <summary>
+        /// Id города
+        /// </summary>
+        public string CitiesId { get; set; }
+        
+        /// <summary>
+        /// Наименование города
+        /// </summary>
+        public string CityName { get; set; }
     }
 }

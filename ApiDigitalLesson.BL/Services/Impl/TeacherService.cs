@@ -369,7 +369,8 @@ namespace ApiDigitalLesson.BL.Services.Impl
                     Description = teacherDto.Description,
                     UserId = Guid.Parse(user.Id),
                     DateBirthday = teacherDto.DateBirthday,
-                    SettingsTeacherId = settingsId
+                    SettingsTeacherId = settingsId,
+                    CitiesId = Guid.Parse(teacherDto.CitiesId)
                 };
                 
                 await _teacherRepository.AddAsync(teacher);
