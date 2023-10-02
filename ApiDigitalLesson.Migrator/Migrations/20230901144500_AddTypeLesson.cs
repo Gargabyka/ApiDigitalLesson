@@ -6,7 +6,7 @@ namespace ApiDigitalLesson.Migrator.Migrations
 {
     public partial class AddTypeLesson : Migration
     {
-                #region  Начальные данные
+        #region  Начальные данные
 
         private readonly Guid _ege = Guid.NewGuid();
         private readonly Guid _oge = Guid.NewGuid();
