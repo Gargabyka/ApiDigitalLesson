@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiDigitalLesson.BL", "ApiD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiDigitalLesson.Model", "ApiDigitalLesson.Model\ApiDigitalLesson.Model.csproj", "{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiDigitalLesson.gRPC", "ApiDigitalLesson.gRPC\ApiDigitalLesson.gRPC.csproj", "{590817D0-5D84-4078-A1D1-4F19E599D336}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F1C75E8-AAF4-4C9C-A8CD-D5E35300DE79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{590817D0-5D84-4078-A1D1-4F19E599D336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{590817D0-5D84-4078-A1D1-4F19E599D336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{590817D0-5D84-4078-A1D1-4F19E599D336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{590817D0-5D84-4078-A1D1-4F19E599D336}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

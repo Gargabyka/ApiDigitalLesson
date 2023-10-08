@@ -156,5 +156,29 @@ namespace ApiDigitalLesson.BL.Services.Impl
                 throw new ApiException(message);
             }
         }
+
+        /// <summary>
+        /// Удалить множество данных сущности
+        /// </summary>
+        public async Task DeleteRangeAsync(IEnumerable<T> entities)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                _context.Set<T>().RemoveRange(entities);
+                await _context.SaveChangesAsync();
+                
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                    
+                var message = $"Не удалось удалить множество данных сущности: {nameof(T)}, {e.Message}";
+
+                _logger.LogError(message);
+                throw new ApiException(message);
+            }
+        }
     }
 }
