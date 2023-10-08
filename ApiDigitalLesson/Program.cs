@@ -1,8 +1,10 @@
 using ApiDigitalLesson.BL;
 using ApiDigitalLesson.Common;
 using ApiDigitalLesson.Extensions;
+using ApiDigitalLesson.gRPC;
 using ApiDigitalLesson.Identity;
 using ApiDigitalLesson.Model.Mapping;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +46,12 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddGrpc();
+
+builder.Services
+    .AddGrpcHealthChecks()
+    .AddCheck("Sample", () => HealthCheckResult.Healthy());
+
 // if (builder != null)
 // {
 //     var provider = builder.Services.BuildServiceProvider();
@@ -66,7 +74,11 @@ app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.AddGrpcEndpoint();
+    endpoints.MapControllers();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

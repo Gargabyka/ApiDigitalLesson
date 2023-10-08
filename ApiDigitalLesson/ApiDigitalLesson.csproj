@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Grpc.AspNetCore.HealthChecks" Version="2.57.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
       <PrivateAssets>all</PrivateAssets>
@@ -27,11 +28,13 @@
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ApiDigitalLesson.BL\ApiDigitalLesson.BL.csproj" />
     <ProjectReference Include="..\ApiDigitalLesson.Common\ApiDigitalLesson.Common.csproj" />
+    <ProjectReference Include="..\ApiDigitalLesson.gRPC\ApiDigitalLesson.gRPC.csproj" />
     <ProjectReference Include="..\ApiDigitalLesson.Identity\ApiDigitalLesson.Identity.csproj" />
   </ItemGroup>
 

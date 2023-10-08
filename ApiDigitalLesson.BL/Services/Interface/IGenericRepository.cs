@@ -32,5 +32,10 @@ namespace ApiDigitalLesson.BL.Services.Interface
         /// Удалить сущность
         /// </summary>
         Task DeleteAsync(Guid id);
+
+        /// <summary>
+        /// Удалить множество данных сущности
+        /// </summary>
+        Task DeleteRangeAsync(IEnumerable<T> entities);
     }
 }

@@ -43,6 +43,7 @@ namespace ApiDigitalLesson.BL
             services.AddScoped<IModeratorService, ModeratorService>();
             services.AddScoped<IViolatorsService, ViolatorsService>();
             services.AddScoped<ICitiesServices, CitiesServices>();
+            services.AddScoped<ICleanerServices, CleanerServices>();
         }
 
     }
